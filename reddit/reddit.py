@@ -20,7 +20,7 @@ for s in subreddits:
     comments_df = comments_df[['author', 'author_fullname', 'body', 'parent_id', 'score', 'subreddit']].replace('\n','', regex=True).replace(',','', regex=True) # keep only certain columns and remove line breaks and commas
     subreddit_dfs.append(comments_df)
 
-reddit_data = df = pd.concat(subreddit_dfs)
+reddit_data = pd.concat(subreddit_dfs)
 
 for stock in stocks:
     stock_df = reddit_data[reddit_data['body'].str.contains(stock)]
