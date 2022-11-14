@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 10 17:10:51 2022
-
-@author: ashleyroakes
-"""
-
 import pandas as pd
 from yahoo_fin.stock_info import get_data
 
@@ -15,9 +7,10 @@ from yahoo_fin.stock_info import get_data
 start = "01/01/2016"
 end = "09/30/2022"
 
+# Pull the data for the selected stocks
 tickers = ["AMZN", "GME", "TSLA", "AMC", "AAPL",  "META", "MSFT", "NFLX", "JPM", "GOOG", "DIS",  
-           "SNAP", "NOK", "BB",  "AAP", "BTC", "PFE", "HD", "KO", "MMM", "PLTR", "V", "PG", "JNJ", 
-           "DJIA","SHOP", "SPY", "GOOGL", "BABA", "WISH", "DB",  "OPE", "^IXIC", "^DJI", "^GSPC"]
+           "SNAP", "NOK", "BB",  "AAP", "BTC-USD", "PFE", "HD", "KO", "MMM", "PLTR", "V", "PG", 
+           "JNJ", "SHOP", "SPY", "GOOGL", "BABA", "WISH", "DB",  "OPEN"]
 
 stck_data = {}
 for tick in tickers:
@@ -25,4 +18,15 @@ for tick in tickers:
 
 # Export Stock Data into csv
 stck_data = pd.concat(stck_data.values(), ignore_index= False)
-#stck_data.to_csv('/Users/ashleyroakes/Desktop/Stock Data/Stock_Data.csv')
+stck_data.to_csv('~/data/Stock_Data.csv')
+
+# Pull the data for the stock indexes
+indices = ["^IXIC", "^DJI", "^GSPC"]
+
+idx_data = {}
+for ind in indices:
+    idx_data[ind.lower()] = get_data(ind.lower(), start_date= start, end_date= end)
+
+idx_data = pd.concat(idx_data.values(), ignore_index= False)
+idx_data.to_csv('~/data/Index_Data.csv')
+
