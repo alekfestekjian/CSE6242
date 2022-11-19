@@ -241,8 +241,6 @@ if __name__ == "__main__":
     }
 
     stocks = ["AMZN","GME","TSLA","AMC","AAPL","META","MSFT","NFLX","JPM","GOOG","DIS","SNAP","NOK","BB","AAP","BTC","PFE","HD","KO","MMM","PLTR","V","PG","JNJ","DJIA","GSPC","SHOP","SPY","GOOGL","BABA","WISH","FB","DB","OPEN"]
-
-    red=RedditPull(stocks, subreddits)
     
     red=RedditPull(stocks, subreddits)
     reddit_dailys=[]
@@ -289,7 +287,6 @@ if __name__ == "__main__":
                         red.CallApi(int(dt.datetime(year, m, d-1).timestamp()), int(dt.datetime(year, m, d).timestamp()), 10) 
                     ) 
                     
-
     reddit_dfs=[]
 
     def RedditDf(ind=int, key=str, rDict=dict):   
