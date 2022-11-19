@@ -238,7 +238,6 @@ if __name__ == "__main__":
         'robinhood': {}
     }
 
-
     red=RedditPull(subreddits)
     reddit_dailys=[]
 
@@ -372,7 +371,6 @@ if __name__ == "__main__":
         
         for col in reddit_comments.columns:
             df = reddit_comments[reddit_comments[col].astype(str).str.contains(pattern, flags=re.IGNORECASE)]
-            df=df.drop_duplicates() ##ticker could be spread across title, selftext or comments creating extra rows
             
             #add ticker that was found
             if len(df)>0:
@@ -380,6 +378,8 @@ if __name__ == "__main__":
                 reddit_df_list.append(df)
             
     insert_df=pd.concat(reddit_df_list, axis=0)
+    #duplicates were created if title, selftext, comments contained the same ticker
+    insert_df=insert_df.drop_duplicates(subset=None, keep='first') 
 
     arch=Archive("setup", "reddit_commentary", 100) #schema, table, chunksize
     arch.DataDump(insert_df)
