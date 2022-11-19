@@ -375,10 +375,16 @@ if __name__ == "__main__":
     reddit_df_list=[]
         
     for k, v in stocks.items():
+        pattern='|'.join([f"({x})" for x in v])
+        
         for col in reddit_comments.columns:
             df = reddit_comments[reddit_comments[col].astype(str).str.contains(pattern)]
-    
-        reddit_df_list.append(df)
+            
+            #add ticker that was found
+            if len(df)>0:
+                df.insert(1, 'ticker', k)
+                reddit_df_list.append(df)
+        
         
     insert_df=pd.concat(reddit_df_list, axis=0)
 
