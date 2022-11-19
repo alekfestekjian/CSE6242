@@ -14,10 +14,6 @@ from psaw import PushshiftAPI
 from sqlalchemy import create_engine
 from yahoo_fin.stock_info import get_data
 
-
-import warnings
-warnings.filterwarnings("ignore", 'This pattern has match groups')
-
 class Config:
     def __init__(self,__schema__, __tbl__, __chunksize__):
         # Was running this locally before using the Heroku instance Alek stood up
@@ -166,7 +162,6 @@ class RedditPull:
 
 
 if __name__ == "__main__":
-
     overall_start=time.perf_counter()
 
     #####################################################################START YAHOO FINANCE API - ASHLEY
@@ -375,7 +370,7 @@ if __name__ == "__main__":
     reddit_df_list=[]
         
     for k, v in stocks.items():
-        pattern='|'.join([f"({x})" for x in v])
+        pattern='|'.join([f"(?:{x})" for x in v])
         
         for col in reddit_comments.columns:
             df = reddit_comments[reddit_comments[col].astype(str).str.contains(pattern, flags=re.IGNORECASE)]
