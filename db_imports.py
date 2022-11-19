@@ -324,6 +324,7 @@ if __name__ == "__main__":
 
     reddit_comments.loc[:,'title']=reddit_comments.apply(lambda x: clean_text(x.title), axis=1)
     reddit_comments.loc[:,'selftext']=reddit_comments.apply(lambda x: clean_text(x.selftext), axis=1)
+    reddit_comments.loc[:,'url']=reddit_comments.apply(lambda x: clean_text(x.url), axis=1)
     reddit_comments.loc[:,'author']=reddit_comments.apply(lambda x: clean_author(x.author), axis=1)
     reddit_comments.loc[:,'comments']=reddit_comments.apply(lambda x: clean_comments(x.comments), axis=1)
 
@@ -379,11 +380,7 @@ if __name__ == "__main__":
             
     insert_df=pd.concat(reddit_df_list, axis=0)
     #duplicates were created if title, selftext, comments contained the same ticker
-    insert_df=insert_df.drop_duplicates(subset=None, keep='first') 
-
-    arch=Archive("setup", "reddit_commentary", 100) #schema, table, chunksize
-    arch.DataDump(insert_df)
-    arch.close()
+    insert_df=insert_df.drop_duplicates(subset=['title','ticker','user_id','selftext','comments'], keep='first') 
 
     overall_finish=time.perf_counter()
     print(f'__Overall time to complete was {round((overall_finish - overall_start)/60, 2)}')
