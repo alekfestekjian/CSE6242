@@ -14,6 +14,10 @@ from psaw import PushshiftAPI
 from sqlalchemy import create_engine
 from yahoo_fin.stock_info import get_data
 
+
+import warnings
+warnings.filterwarnings("ignore", 'This pattern has match groups')
+
 class Config:
     def __init__(self,__schema__, __tbl__, __chunksize__):
         # Was running this locally before using the Heroku instance Alek stood up
@@ -305,7 +309,18 @@ if __name__ == "__main__":
     reddit_comments=pd.concat(reddit_dfs, axis=0)
 
     def clean_comments(coms):
-        comments=[s for s in coms if not bool(re.search('(This topic has been removed)|(Your submission was automatically removed)|(I am a bot from rwallstreetbets)', s, re.I))]
+        filter_str=[
+            'This topic has been removed',
+            'Your submission was automatically removed',
+            'I am a bot from rwallstreetbets',
+            'Please note that as a topic focused subreddit',
+            'Sorry your posthttpswww',
+            'was automatically removed'
+        ]
+        
+        pattern='|'.join([f"({x})" for x in filter_str])
+        
+        comments=[s for s in coms if not bool(re.search(pattern, s, re.I))]
         return ','.join([re.sub(r'[^A-Za-z0-9 \,\.\!]+', '', s) for s in comments])
 
     def clean_author(auth):
@@ -320,8 +335,55 @@ if __name__ == "__main__":
     reddit_comments.loc[:,'author']=reddit_comments.apply(lambda x: clean_author(x.author), axis=1)
     reddit_comments.loc[:,'comments']=reddit_comments.apply(lambda x: clean_comments(x.comments), axis=1)
 
+    ##filter out anything that isnt in our stock list
+    stocks = {"AMZN":["AMZN", "AMAZON"],
+          "GME":["GME", "GAMESTOP", "GAME STOP"],
+          "TSLA":["TSLA", "TESLA"],
+          "AMC":["AMC"],
+          "AAPL":["AAPL", "AAPLE"],
+          "MSFT":["MSFT", "MICRO", "MICROSOFT"],
+          "NFLX":["NFLX", "NETFLIX"],
+          "JPM":["JPM", "MORGAN"],
+          "GOOG":["GOOG", "GOOGLE", "ALPHABET"],
+          "GOOGL":["GOOG", "GOOGLE", "ALPHABET"],
+          "DIS":["DIS", "DISNEY"],
+          "SNAP":["SNAP","SNAPCHAT"],
+          "NOK":["NOK", "NOKIA"],
+          "BB":["BB", "BLACKBERRY", "BLACK BERRY"],
+          "AAP":["AAP", "ADVTG", "ADVANTAGE"],
+          "BTC":["BTC", "BITCOIN", "BTC-USD"],
+          "PFE":["PFE", "PFIZER", "PFZR"],
+          "HD":["HD", "HOMEDEPOT", "HOME DEPOT"],
+          "KO":["KO", "COKE", "COCACOLA", "COCA COLA", "COCA-COLA"],
+          "MMM":["MMM", "3M"],
+          "PLTR":["PLTR", "PALANTIR"],
+          "V":["V", "VISA"],
+          "PG":["PG", "PROCTOR"],
+          "JNJ":["JNJ", "JOHNSON"],
+          "DJIA":["DJIA", "DJI"],
+          "GSPC":["GSPC", "S&P", "SNP"],
+          "SHOP":["SHOP"],
+          "SPY":["SPY", "SPYDER"],
+          "BABA":["BABA", "ALIBABA"],
+          "WISH":["WISH", "ContextLogic"],
+          "META":["FB", "META"],
+          "DB":["DB", "Deutsche"],
+          "OPEN":["OPEN", "OPENDOOR"]
+         }
+
+    ###looking for each stock in our list
+    reddit_df_list=[]
+        
+    for k, v in stocks.items():
+        for col in reddit_comments.columns:
+            df = reddit_comments[reddit_comments[col].astype(str).str.contains(pattern)]
+    
+        reddit_df_list.append(df)
+        
+    insert_df=pd.concat(reddit_df_list, axis=0)
+
     arch=Archive("setup", "reddit_commentary", 100) #schema, table, chunksize
-    arch.DataDump(reddit_comments)
+    arch.DataDump(insert_df)
 
     overall_finish=time.perf_counter()
     print(f'__Overall time to complete was {round((overall_finish - overall_start)/60, 2)}')
