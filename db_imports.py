@@ -378,7 +378,8 @@ if __name__ == "__main__":
         pattern='|'.join([f"({x})" for x in v])
         
         for col in reddit_comments.columns:
-            df = reddit_comments[reddit_comments[col].astype(str).str.contains(pattern)]
+            df = reddit_comments[reddit_comments[col].astype(str).str.contains(pattern, flags=re.IGNORECASE)]
+            df=df.drop_duplicates() ##ticker could be spread across title, selftext or comments creating extra rows
             
             #add ticker that was found
             if len(df)>0:
