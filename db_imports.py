@@ -1,12 +1,15 @@
+import re
 import os
 import praw
 import time
+import calendar
 import psycopg2
 import pandas as pd
 import datetime as dt
 import multiprocessing
 import concurrent.futures
-from datetime import datetime
+# from pmaw import PushshiftAPI
+from datetime import datetime, timedelta
 from psaw import PushshiftAPI
 from sqlalchemy import create_engine
 from yahoo_fin.stock_info import get_data
@@ -122,6 +125,7 @@ class RedditPull:
                     board['upvote_ratio']=submission_praw.upvote_ratio
                     board['url']=submission_praw.url
 
+                    #reference https://towardsdatascience.com/how-to-collect-a-reddit-dataset-c369de539114
                     # extend the comment tree all the way
                     submission_praw.comments.replace_more(limit=5)
                     # for each comment in flattened comment tree
@@ -240,9 +244,87 @@ if __name__ == "__main__":
 
     red=RedditPull(stocks, subreddits)
     
-    #consider looping through and returning each month given the limits placed
-    apiresults=red.CallApi(2019, 2019, 10) #start year, end year, limit
+    red=RedditPull(stocks, subreddits)
+    reddit_dailys=[]
 
+    #manually setting this for now
+    year=2022
+    months=9 #stop at September for 2022
+
+    ##Loop all months in the year 
+    for m in range(1, 2): #months+1
+    #     print(f"Moving to the next month: {m}
+        end_dy = calendar.monthrange(year, m)[1]
+        
+        #previous month Dec if ==Jan
+        if m==1: 
+            prv_end_dy = calendar.monthrange(year, 12)[1]
+            prv_mo = 12
+            
+        else:
+            prv_end_dy = calendar.monthrange(year, m-1)[1]
+            prv_mo = m + 1
+        
+        #Loop all days in the current month 
+        for d in range(1, end_dy+1):
+            
+            if d==1 and m==1: #go back prior prior month and prior year for 1/1/00
+    #             print(f"Checkpoint 1 - {year-1}/{prv_mo}/{prv_end_dy} to {year}/{m}/{d}")
+    #             args( ts_after, ts_before, end year, limit )
+                reddit_dailys.append( 
+                            red.CallApi(int(dt.datetime(year-1, prv_mo, prv_end_dy).timestamp()), int(dt.datetime(year, m, d).timestamp()), 10) 
+                        ) 
+            
+            elif d==1: #go back prior prior month
+    #             print(f" Checkpoint 2 - {year}/{prv_mo}/{prv_end_dy} to {year}/{m}/{d}")
+    #             args( ts_after, ts_before, end year, limit )
+                reddit_dailys.append( 
+                            red.CallApi(int(dt.datetime(year, prv_mo, prv_end_dy).timestamp()), int(dt.datetime(year, m, d).timestamp()), 10) 
+                        ) 
+            
+            else:
+    #             print(f" Checkpoint 3 - {year}/{m}/{d-1} to {year}/{m}/{d}")
+    #             args( ts_after, ts_before, end year, limit )
+                reddit_dailys.append( 
+                        red.CallApi(int(dt.datetime(year, m, d-1).timestamp()), int(dt.datetime(year, m, d).timestamp()), 10) 
+                    ) 
+                    
+
+    reddit_dfs=[]
+
+    def RedditDf(ind=int, key=str, rDict=dict):   
+        try:
+            df=pd.DataFrame(rDict[key])
+            df.insert(0, 'subreddit', key, allow_duplicates=True)
+            return df
+        
+        except Exception as exc:
+                print(f"__generated an exception: {exc} for board: {key}__")
+        
+    for apiresults in reddit_dailys:
+        for i, d in enumerate(apiresults):
+            reddit_dfs.append( RedditDf(i, list(apiresults[i].keys())[0], d) )
+        
+    reddit_comments=pd.concat(reddit_dfs, axis=0)
+
+    def clean_comments(coms):
+        comments=[s for s in coms if not bool(re.search('(This topic has been removed)|(Your submission was automatically removed)|(I am a bot from rwallstreetbets)', s, re.I))]
+        return ','.join([re.sub(r'[^A-Za-z0-9 \,\.\!]+', '', s) for s in comments])
+
+    def clean_author(auth):
+        author=re.findall(r"(?<=Redditor\(name=\').*(?=\'\))", str(auth))
+        return author if len(author) > 0 else ''
+
+    def clean_text(_str):
+        return re.sub(r'[^A-Za-z0-9 \,\.\!]+', '', _str)
+
+    reddit_comments.loc[:,'title']=reddit_comments.apply(lambda x: clean_text(x.title), axis=1)
+    reddit_comments.loc[:,'selftext']=reddit_comments.apply(lambda x: clean_text(x.selftext), axis=1)
+    reddit_comments.loc[:,'author']=reddit_comments.apply(lambda x: clean_author(x.author), axis=1)
+    reddit_comments.loc[:,'comments']=reddit_comments.apply(lambda x: clean_comments(x.comments), axis=1)
+
+    arch=Archive("setup", "reddit_commentary", 100) #schema, table, chunksize
+    arch.DataDump(reddit_comments)
 
     overall_finish=time.perf_counter()
     print(f'__Overall time to complete was {round((overall_finish - overall_start)/60, 2)}')
