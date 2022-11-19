@@ -78,8 +78,7 @@ class Archive(Config):
 
 
 class RedditPull:
-    def __init__(self, tickers, subreddits):
-        self.tickers=tickers
+    def __init__(self, subreddits):
         self.subreddits=subreddits
         self.api = PushshiftAPI()        
 
@@ -239,9 +238,8 @@ if __name__ == "__main__":
         'robinhood': {}
     }
 
-    stocks = ["AMZN","GME","TSLA","AMC","AAPL","META","MSFT","NFLX","JPM","GOOG","DIS","SNAP","NOK","BB","AAP","BTC","PFE","HD","KO","MMM","PLTR","V","PG","JNJ","DJIA","GSPC","SHOP","SPY","GOOGL","BABA","WISH","FB","DB","OPEN"]
-    
-    red=RedditPull(stocks, subreddits)
+
+    red=RedditPull(subreddits)
     reddit_dailys=[]
 
     #manually setting this for now
