@@ -8,11 +8,12 @@ import pandas as pd
 import datetime as dt
 import multiprocessing
 import concurrent.futures
-# from pmaw import PushshiftAPI
-from datetime import datetime, timedelta
 from psaw import PushshiftAPI
+from datetime import datetime, timedelta
+from nltk.tokenize import sent_tokenize
 from sqlalchemy import create_engine
 from yahoo_fin.stock_info import get_data
+
 
 class Config:
     def __init__(self,__schema__, __tbl__, __chunksize__):
