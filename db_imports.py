@@ -316,21 +316,23 @@ if __name__ == "__main__":
         
         #do not include 
         comments=[s for s in coms if not bool(re.search(pattern, s, re.I))]
-        return ','.join([re.sub(r'[^A-Za-z0-9 \,\.\!\&\\\:\;\/\@\#\$\%]+', '', s) for s in comments])
+        return ','.join([re.sub(r'[^A-Za-z0-9 \,\.\!\&\\\:\;\/\@\#\$\%\?]+', '', s) for s in comments])
 
     def clean_author(auth):
         author=re.findall(r"(?<=Redditor\(name=\').*(?=\'\))", str(auth))
         return author if len(author) > 0 else ''
 
     def clean_text(_str):
-        return re.sub(r'[^A-Za-z0-9 \,\.\!\&\\\:\;\/\@\#\$\%]+', '', _str)
+        return re.sub(r'[^A-Za-z0-9 \,\.\!\&\\\:\;\/\@\#\$\%\?]+', '', _str)
 
     reddit_comments.loc[:,'title']=reddit_comments.apply(lambda x: clean_text(x.title), axis=1)
     reddit_comments.loc[:,'selftext']=reddit_comments.apply(lambda x: clean_text(x.selftext), axis=1)
     reddit_comments.loc[:,'url']=reddit_comments.apply(lambda x: clean_text(x.url), axis=1)
     reddit_comments.loc[:,'author']=reddit_comments.apply(lambda x: clean_author(x.author), axis=1)
     reddit_comments.loc[:,'comments']=reddit_comments.apply(lambda x: clean_comments(x.comments), axis=1)
-    
+
+    reddit_comments=reddit_comments.reset_index(drop=True)
+
     ##filter out anything that isnt in our stock list
     stocks = {"AMZN":["AMZN", "AMAZON"],
             "GME":["GME", "GAMESTOP", "GAME STOP"],
@@ -358,47 +360,70 @@ if __name__ == "__main__":
             "JNJ":["JNJ", "JOHNSON"],
             "DJIA":["DJIA", "DJI","DowJones","Dow Jones"],
             "GSPC":["GSPC", "S&P", "SNP"],
-            "SHOP":["SHOP"],
+            "SHOP":["SHOP ","SHOP,"],
             "SPY":["SPY", "SPYDER"],
             "BABA":["BABA", "ALIBABA"],
-            "WISH":["WISH", "ContextLogic"],
-            "META":["FB", "META"],
-            "DB":["DB", "Deutsche"],
-            "OPEN":["OPEN", "OPENDOOR"]
+            "WISH":["WISH", " WISH,",",WISH," "ContextLogic"],
+            "META":[" FB", " META ", " META,",",META"],
+            "DB":[" DB ", " DB,","Deutsche"],
+    #           "OPEN":["OPEN", "OPENDOOR"]
             }
 
-    def token_comments(comments):
+    def token_comments(comments, pattern):
         com_list=[]
 
         for com in comments:
-            if bool(re.search("(?:AMZN)|(?:amazon)", com, re.I)):
+            if bool(re.search(pattern, com, re.I)):
                 com_list.append(com)
         
         return ' '.join([x for x in com_list]) if len(com_list) > 0 else ''
 
-    ###looking for each stock in our list
-    reddit_df_list=[]
+    def build_df(ticker=str, pattern=str):
+        index=[]
+        titles=list(reddit_comments['title'].values)
         
+        ##split the selftext/comments into sentences returning only relevant tickers for this project
+        selftext=list(token_comments(re.split(r' *[\.\?!][\'"\)\]]* *', s), pattern) for s in list(reddit_comments['selftext'].values))
+        comments=[token_comments(re.split(r' *[\.\?!][\'"\)\]]* *', c), pattern) for c in list(reddit_comments['comments'].values)] 
+        
+        ##if title, selftext or comments lack any of our stocks than will ignore
+        ##grabbing its index to filter our reddit df
+        for ind, t in enumerate(titles):
+            if bool(re.search(pattern, t, re.I)):
+                index.append(ind)
+                
+        for ind, s in enumerate(selftext):
+            if bool(re.search(pattern, s, re.I)):
+                index.append(ind)
+            
+        for ind, c in enumerate(comments):
+            if bool(re.search(pattern, c, re.I)):
+                index.append(ind)
+        
+        try:
+            reddit_comments.loc[:,'selftext']=pd.Series(selftext)
+            reddit_comments.loc[:,'comments']=pd.Series(comments) #replacing with reduced commentary to only be a sentence with the stock ticker/name
+            df=reddit_comments.filter(items=list(set(index)), axis=0) 
+            df.insert(1, 'ticker', ticker)
+            return df 
+
+        except Exception as exc:
+            print(f"__generated an exception: {exc}. Check that title, selftext and commentary are indexed properly__")
+    
+    
+    reddit_df_list=[]
+
     for k, v in stocks.items():
         pattern='|'.join([f"(?:{x})" for x in v])
+        reddit_df_list.append( build_df(k, pattern) )
         
-        for col in reddit_comments.columns:
-            df = reddit_comments[reddit_comments[col].astype(str).str.contains(pattern, flags=re.IGNORECASE)]
-            
-            df.loc[:,'comments']=df.loc[:,'comments'].apply(lambda x : token_comments(sent_tokenize(x)))
-            
-            #add ticker that was found
-            if len(df) > 0:
-                df.insert(1, 'ticker', k)
-                reddit_df_list.append(df)
-        
-insert_df=pd.concat(reddit_df_list, axis=0)
-#duplicates were created if title, selftext, comments contained the same ticker
-insert_df=insert_df.drop_duplicates(subset=['title','ticker','user_id','selftext','comments'], keep='first') 
-            
     insert_df=pd.concat(reddit_df_list, axis=0)
     #duplicates were created if title, selftext, comments contained the same ticker
-    insert_df=insert_df.drop_duplicates(subset=['title','ticker','user_id','selftext','comments'], keep='first') 
+    insert_df=insert_df.drop_duplicates(subset=['subreddit','title','ticker','selftext','comments'], keep='first') 
+    insert_df=insert_df.reset_index(drop=True)
+        
+    arch=Archive("setup", "reddit_commentary", 250) #schema, table, chunksize
+    arch.DataDump(insert_df)
 
     overall_finish=time.perf_counter()
     print(f'__Overall time to complete was {round((overall_finish - overall_start)/60, 2)}')
