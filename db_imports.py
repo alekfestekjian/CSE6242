@@ -10,8 +10,6 @@ import multiprocessing
 import concurrent.futures
 from psaw import PushshiftAPI
 from datetime import datetime, timedelta
-from nltk.tokenize import sent_tokenize
-from sqlalchemy import create_engine
 from yahoo_fin.stock_info import get_data
 
 
