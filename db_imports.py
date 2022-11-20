@@ -285,7 +285,7 @@ if __name__ == "__main__":
                     
     reddit_dfs=[]
 
-    def RedditDf(ind=int, key=str, rDict=dict):   
+    def reddit_df(ind=int, key=str, rDict=dict):   
         try:
             df=pd.DataFrame(rDict[key])
             df.insert(0, 'subreddit', key, allow_duplicates=True)
@@ -296,13 +296,14 @@ if __name__ == "__main__":
         
     for apiresults in reddit_dailys:
         for i, d in enumerate(apiresults):
-            reddit_dfs.append( RedditDf(i, list(apiresults[i].keys())[0], d) )
+            reddit_dfs.append( reddit_df(i, list(apiresults[i].keys())[0], d) )
         
     reddit_comments=pd.concat(reddit_dfs, axis=0)
 
     def clean_comments(coms):
         filter_str=[
             'This topic has been removed',
+            'Your submission was removed because it is a short post',
             'Your submission was automatically removed',
             'I am a bot from rwallstreetbets',
             'Please note that as a topic focused subreddit',
@@ -312,57 +313,58 @@ if __name__ == "__main__":
         
         pattern='|'.join([f"({x})" for x in filter_str])
         
+        #do not include 
         comments=[s for s in coms if not bool(re.search(pattern, s, re.I))]
-        return ','.join([re.sub(r'[^A-Za-z0-9 \,\.\!]+', '', s) for s in comments])
+        return ','.join([re.sub(r'[^A-Za-z0-9 \,\.\!\&\\\:\;\/\@\#\$\%]+', '', s) for s in comments])
 
     def clean_author(auth):
         author=re.findall(r"(?<=Redditor\(name=\').*(?=\'\))", str(auth))
         return author if len(author) > 0 else ''
 
     def clean_text(_str):
-        return re.sub(r'[^A-Za-z0-9 \,\.\!]+', '', _str)
+        return re.sub(r'[^A-Za-z0-9 \,\.\!\&\\\:\;\/\@\#\$\%]+', '', _str)
 
     reddit_comments.loc[:,'title']=reddit_comments.apply(lambda x: clean_text(x.title), axis=1)
     reddit_comments.loc[:,'selftext']=reddit_comments.apply(lambda x: clean_text(x.selftext), axis=1)
     reddit_comments.loc[:,'url']=reddit_comments.apply(lambda x: clean_text(x.url), axis=1)
     reddit_comments.loc[:,'author']=reddit_comments.apply(lambda x: clean_author(x.author), axis=1)
     reddit_comments.loc[:,'comments']=reddit_comments.apply(lambda x: clean_comments(x.comments), axis=1)
-
+    
     ##filter out anything that isnt in our stock list
     stocks = {"AMZN":["AMZN", "AMAZON"],
-          "GME":["GME", "GAMESTOP", "GAME STOP"],
-          "TSLA":["TSLA", "TESLA"],
-          "AMC":["AMC"],
-          "AAPL":["AAPL", "AAPLE"],
-          "MSFT":["MSFT", "MICRO", "MICROSOFT"],
-          "NFLX":["NFLX", "NETFLIX"],
-          "JPM":["JPM", "MORGAN"],
-          "GOOG":["GOOG", "GOOGLE", "ALPHABET"],
-          "GOOGL":["GOOG", "GOOGLE", "ALPHABET"],
-          "DIS":["DIS", "DISNEY"],
-          "SNAP":["SNAP","SNAPCHAT"],
-          "NOK":["NOK", "NOKIA"],
-          "BB":["BB", "BLACKBERRY", "BLACK BERRY"],
-          "AAP":[" AAP ", "ADVTG", "ADVANTAGE"],
-          "BTC":["BTC", "BITCOIN", "BTC-USD"],
-          "PFE":["PFE", "PFIZER", "PFZR"],
-          "HD":["HD", "HOMEDEPOT", "HOME DEPOT"],
-          "KO":["KO", "COKE", "COCACOLA", "COCA COLA", "COCA-COLA"],
-          "MMM":["MMM", "3M"],
-          "PLTR":["PLTR", "PALANTIR"],
-          "V":[" V ", " V,", ",V,", "VISA"],
-          "PG":["PG", "PROCTOR"],
-          "JNJ":["JNJ", "JOHNSON"],
-          "DJIA":["DJIA", "DJI"],
-          "GSPC":["GSPC", "S&P", "SNP"],
-          "SHOP":["SHOP"],
-          "SPY":["SPY", "SPYDER"],
-          "BABA":["BABA", "ALIBABA"],
-          "WISH":["WISH", "ContextLogic"],
-          "META":["FB", "META"],
-          "DB":["DB", "Deutsche"],
-          "OPEN":["OPEN", "OPENDOOR"]
-         }
+            "GME":["GME", "GAMESTOP", "GAME STOP"],
+            "TSLA":["TSLA", "TESLA"],
+            "AMC":["AMC"],
+            "AAPL":["AAPL", "AAPLE"],
+            "MSFT":["MSFT", "MICRO", "MICROSOFT"],
+            "NFLX":["NFLX", "NETFLIX"],
+            "JPM":["JPM", "MORGAN","JPMorgan"],
+            "GOOG":["GOOG", "GOOGLE", "ALPHABET"],
+            "GOOGL":["GOOG", "GOOGLE", "ALPHABET"],
+            "DIS":["DIS", "DISNEY"],
+            "SNAP":["SNAP","SNAPCHAT"],
+            "NOK":["NOK", "NOKIA"],
+            "BB":["BB", "BLACKBERRY", "BLACK BERRY"],
+            "AAP":[" AAP ", "ADVTG", "ADVANTAGE"],
+            "BTC":["BTC", "BITCOIN", "BTC-USD"],
+            "PFE":["PFE", "PFIZER", "PFZR"],
+            "HD":["HD", "HOMEDEPOT", "HOME DEPOT"],
+            "KO":["KO", "COKE", "COCACOLA", "COCA COLA", "COCA-COLA"],
+            "MMM":["MMM", "3M"],
+            "PLTR":["PLTR", "PALANTIR"],
+            "V":[" V ", " V,", ",V,", "VISA"],
+            "PG":["PG", "PROCTOR"],
+            "JNJ":["JNJ", "JOHNSON"],
+            "DJIA":["DJIA", "DJI","DowJones","Dow Jones"],
+            "GSPC":["GSPC", "S&P", "SNP"],
+            "SHOP":["SHOP"],
+            "SPY":["SPY", "SPYDER"],
+            "BABA":["BABA", "ALIBABA"],
+            "WISH":["WISH", "ContextLogic"],
+            "META":["FB", "META"],
+            "DB":["DB", "Deutsche"],
+            "OPEN":["OPEN", "OPENDOOR"]
+            }
 
     ###looking for each stock in our list
     reddit_df_list=[]
