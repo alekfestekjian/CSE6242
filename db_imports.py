@@ -366,6 +366,15 @@ if __name__ == "__main__":
             "OPEN":["OPEN", "OPENDOOR"]
             }
 
+    def token_comments(comments):
+        com_list=[]
+
+        for com in comments:
+            if bool(re.search("(?:AMZN)|(?:amazon)", com, re.I)):
+                com_list.append(com)
+        
+        return ' '.join([x for x in com_list]) if len(com_list) > 0 else ''
+
     ###looking for each stock in our list
     reddit_df_list=[]
         
@@ -375,10 +384,16 @@ if __name__ == "__main__":
         for col in reddit_comments.columns:
             df = reddit_comments[reddit_comments[col].astype(str).str.contains(pattern, flags=re.IGNORECASE)]
             
+            df.loc[:,'comments']=df.loc[:,'comments'].apply(lambda x : token_comments(sent_tokenize(x)))
+            
             #add ticker that was found
-            if len(df)>0:
+            if len(df) > 0:
                 df.insert(1, 'ticker', k)
                 reddit_df_list.append(df)
+        
+insert_df=pd.concat(reddit_df_list, axis=0)
+#duplicates were created if title, selftext, comments contained the same ticker
+insert_df=insert_df.drop_duplicates(subset=['title','ticker','user_id','selftext','comments'], keep='first') 
             
     insert_df=pd.concat(reddit_df_list, axis=0)
     #duplicates were created if title, selftext, comments contained the same ticker
