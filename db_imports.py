@@ -336,7 +336,7 @@ if __name__ == "__main__":
             "GME":["GME", "GAMESTOP", "GAME STOP"],
             "TSLA":["TSLA", "TESLA"],
             "AMC":["AMC"],
-            "AAPL":["AAPL", "AAPLE"],
+            "AAPL":["AAPL", "APPLE"],
             "MSFT":["MSFT", "MICRO", "MICROSOFT"],
             "NFLX":["NFLX", "NETFLIX"],
             "JPM":["JPM", "MORGAN","JPMorgan"],
