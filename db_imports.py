@@ -287,12 +287,16 @@ if __name__ == "__main__":
             return df
         
         except Exception as exc:
-                print(f"__generated an exception: {exc} for board: {key}__")
+            print(f"__generated an exception: {exc} for board: {key}__")
         
     for apiresults in reddit_dailys:
         for i, d in enumerate(apiresults):
-            reddit_dfs.append( reddit_df(i, list(apiresults[i].keys())[0], d) )
-        
+            try:
+                reddit_dfs.append( reddit_df(i, list(apiresults[i].keys())[0], d) )
+            
+            except Exception as exc:
+                print(f"__generated an exception: {exc} for: {apiresults}__")
+                
     reddit_comments=pd.concat(reddit_dfs, axis=0)
 
     def clean_comments(coms):
@@ -370,15 +374,22 @@ if __name__ == "__main__":
             if bool(re.search(pattern, com, re.I)):
                 com_list.append(com)
         
-        return '. '.join([x for x in com_list]) if len(com_list) > 0 else ''
+        return ''.join([x for x in com_list]) if len(com_list) > 0 else ''
+
+    def punctuation_splits(punc_str):
+        match_ind=[]
+        for match in re.finditer(r'[.?!]', punc_str):
+            match_ind.append(match.end())
+        
+        return [punc_str[i:j] for i,j in zip(match_ind, match_ind[1:]+[None]) if len(punc_str[i:j]) > 1]
 
     def build_df(ticker=str, pattern=str):
         index=[]
         titles=list(reddit_comments['title'].values)
         
         ##split the selftext/comments into sentences returning only relevant tickers for this project
-        selftext=list(token_comments(re.split(r' *[\.\?!]', s, re.I), pattern)+'.' for s in list(reddit_comments['selftext'].values))
-        comments=[token_comments(re.split(r' *[\.\?!]', c, re.I), pattern)+'.' for c in list(reddit_comments['comments'].values)]
+        selftext=[token_comments(punctuation_splits(s), pattern) for s in list(reddit_comments['selftext'].values)]
+        comments=[token_comments(punctuation_splits(c), pattern) for c in list(reddit_comments['comments'].values)]
         
         ##if title, selftext or comments lack any of our stocks than will ignore
         ##grabbing its index to filter our reddit df
@@ -411,14 +422,51 @@ if __name__ == "__main__":
         pattern='|'.join([f"(?:{x})" for x in v])
         reddit_df_list.append( build_df(k, pattern) )
         
-    insert_df=pd.concat(reddit_df_list, axis=0)
+    reddit_dataframe=pd.concat(reddit_df_list, axis=0)
     #duplicates were created if title, selftext, comments contained the same ticker
-    insert_df=insert_df.drop_duplicates(subset=['subreddit','title','ticker','selftext','comments'], keep='first') 
-    insert_df=insert_df.reset_index(drop=True)
+    reddit_dataframe=reddit_dataframe.drop_duplicates(subset=['subreddit','title','ticker','selftext','comments'], keep='first') 
+    reddit_dataframe=reddit_dataframe.reset_index(drop=True)
+
+    def exploderows(row_index, ticker, pattern, ticker_check, selftext, comment):    
+        if ticker!=ticker_check:
+            if bool(re.search(pattern, selftext, re.I)) or bool(re.search(pattern, comment, re.I)):
+    #             print(f"ticker was found in selftext? {bool(re.search(pattern, selftext, re.I))} : {ticker}")
+    #             print(f"ticker was found in comments? {bool(re.search(pattern, comment, re.I))} : {ticker}")
+                
+                return True, ticker
         
+            else:
+    #             print(f"No extra data found in selftext and comments for {ticker}")
+                return False, ticker
+            
+        else:
+    #         print("tickers are equal so nothing to do")
+            return False, ticker
+
+    ##Scanning the dataframe for every ticker in our stocks dictionary for opportunities to create new rows
+    pattern=""
+    reddit_df_copy=reddit_dataframe.copy() #change to reddit_comments
+    dataframe_copies=[]
+
+    for i, (k, v) in enumerate(stocks.items()):
+        pattern = '|'.join([f"(?:{x})" for x in v])
+
+        for j in range(0, len(reddit_df_copy)): ##reddit_comments
+            explode_bool, explode_ticker = exploderows(j, k, pattern, reddit_df_copy.loc[j, 'ticker'], reddit_df_copy.loc[j, 'selftext'], reddit_df_copy.loc[j, 'comments'])
+                
+            if explode_bool:
+                ##copies of that record out to a new row later and change the ticker = ticker
+                print(f"Explode row for ticker: {explode_ticker}")
+                
+                temp_df=reddit_df_copy.loc[j,:].copy()
+                temp_df['ticker']=explode_ticker
+
+                dataframe_copies.append(temp_df)
+        
+    insert_df=pd.concat([pd.concat(dataframe_copies, axis=1).T, reddit_df_copy]).reset_index(drop=True)
+
     arch=Archive("setup", "reddit_commentary", 250) #schema, table, chunksize
     arch.DataDump(insert_df)
-
     ###############################################################################END REDDIT API PULL/INSERT
 
     overall_finish=time.perf_counter()
