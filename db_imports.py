@@ -83,67 +83,59 @@ class RedditPull:
 
         user_agent="Scaper 1.0 by /u/cse6242"
         self.reddit = praw.Reddit(
-            client_id='suI0pOf9QlGV1wQfP21TTw',
-            client_secret='1WA5IVIx-A2d7d-T9UjuulA9tWERiA',
+            client_id = 'suI0pOf9QlGV1wQfP21TTw',
+            client_secret ='1WA5IVIx-A2d7d-T9UjuulA9tWERiA',
             username = "cse6242",
             password = "dva-6242",
             user_agent = user_agent
         )
         
-    def RedApi(self, red, start_year=2021, end_year=2022, limit=10):
-        
+    def RedApi(self, red, ts_after=int, ts_before=int, limit=10):
         api_start=time.perf_counter()
         subreddit=list(red.keys())[0]
         
         try:    
-            reddit_board={}
-            for year in range(start_year, end_year+1):         
-                print(f"Running API Pull for Reddit Board: {list(red.keys())[0]} on Year {year}") 
-                
-                ts_after = int(dt.datetime(year, 1, 1).timestamp())
-                ts_before = int(dt.datetime(year+1, 1, 1).timestamp())
+#             print(f"Running API Pull for Reddit Board: {list(red.keys())[0]} for {datetime.utcfromtimestamp(int(ts_before)).strftime('%Y-%m-%d')}") 
+#             submissions_dict = {"id" : [],"url" : [],"title" : [],"score" : [], "num_comments": [], "created_utc" : [], "selftext" : []}
+#             submission_comments_dict = {"comment_id" : [],"comment_parent_id" : [],"comment_body" : [],"comment_link_id" : []}
             
-                submissions_dict = {"id" : [],"url" : [],"title" : [],"score" : [], "num_comments": [], "created_utc" : [], "selftext" : []}
-                submission_comments_dict = {"comment_id" : [],"comment_parent_id" : [],"comment_body" : [],"comment_link_id" : []}
+            gen = self.api.search_submissions(after=ts_after, before=ts_before, filter=['id'], subreddit=subreddit, limit=limit )
+                                              
+            board={'title':[], 'selftext':[], 'user_id':[], 'author':[], 'created_dt':[], 'score':[], 'upvote_ratio':[], 'url':[], 'comments':[]}
 
-                gen = self.api.search_submissions( after=ts_after, before=ts_before, filter=['id'], subreddit=subreddit, limit=limit )
+            for i, submission_psaw in enumerate(gen):
+                submission_id = submission_psaw.d_['id']
+                submission_praw = self.reddit.submission(id=submission_id)
+
+                board['title'].append(submission_praw.title)
+                board['selftext'].append(submission_praw.selftext)
+                board['user_id'].append(submission_praw.id)
+                board['author'].append(submission_praw.author)
+                board['created_dt'].append(datetime.utcfromtimestamp(int(submission_praw.created_utc)).strftime('%Y-%m-%d'))
+                board['score'].append(submission_praw.score)
+                board['upvote_ratio'].append(submission_praw.upvote_ratio)
+                board['url'].append(submission_praw.url)
                 
-                for i, submission_psaw in enumerate(gen):
-                    submission_id = submission_psaw.d_['id']
-                    submission_praw = self.reddit.submission(id=submission_id)
+                # https://praw.readthedocs.io/en/stable/tutorials/comments.html
+                # extend the comment tree all the way
+                submission_praw.comments.replace_more(limit=5)
+                
+                submission_comments_dict = {"comment_body" : []}
+                
+                # for each comment in flattened comment tree
+                for comment in submission_praw.comments.list():
+                    submission_comments_dict["comment_body"].append(comment.body)
+                            
+                board['comments'].append(submission_comments_dict["comment_body"])
+    
+            api_finish=time.perf_counter()
+            print(f"__Overall time to complete reddit board {list(red.keys())[0]} for {datetime.utcfromtimestamp(int(ts_before)).strftime('%Y-%m-%d')} was: {round((api_finish - api_start)/60, 2)}__")
 
-                    board={}
+            return {list(red.keys())[0]: board}
 
-                    board['title']=submission_praw.title
-                    board['year']=year
-                    board['user_id']=submission_praw.id
-                    board['author']=submission_praw.author
-                    board['created_dt']=datetime.utcfromtimestamp(int(submission_praw.created_utc)).strftime('%Y-%m-%d')
-                    board['score']=submission_praw.score
-                    board['upvote_ratio']=submission_praw.upvote_ratio
-                    board['url']=submission_praw.url
-
-                    #reference https://towardsdatascience.com/how-to-collect-a-reddit-dataset-c369de539114
-                    # extend the comment tree all the way
-                    submission_praw.comments.replace_more(limit=5)
-                    # for each comment in flattened comment tree
-                    for comment in submission_praw.comments.list():
-                        submission_comments_dict["comment_id"].append(comment.id)
-                        submission_comments_dict["comment_parent_id"].append(comment.parent_id)
-                        submission_comments_dict["comment_body"].append(comment.body)
-                        submission_comments_dict["comment_link_id"].append(comment.link_id)
-
-                    board['comments']=submission_comments_dict
-
-                    reddit_board[f"{year}-{i}"]=board
-       
         except Exception as exc:
             print(f"__generated an exception: {exc} for board: {list(red.keys())[0]}__")
             
-        api_finish=time.perf_counter()
-        print(f'__Overall time to complete reddit board {list(red.keys())[0]} was: {round((api_finish - api_start)/60, 2)}')
-        
-        return {list(red.keys())[0]: reddit_board}
         
     def CallApi(self, start, end, limit):
         runs={}
@@ -245,7 +237,7 @@ if __name__ == "__main__":
     months=9 #stop at September for 2022
 
     ##Loop all months in the year 
-    for m in range(1, 2): #months+1
+    for m in range(1, months+1):
     #     print(f"Moving to the next month: {m}
         end_dy = calendar.monthrange(year, m)[1]
         
@@ -281,6 +273,7 @@ if __name__ == "__main__":
                 reddit_dailys.append( 
                         red.CallApi(int(dt.datetime(year, m, d-1).timestamp()), int(dt.datetime(year, m, d).timestamp()), 10) 
                     ) 
+                
                     
     reddit_dfs=[]
 
@@ -362,7 +355,7 @@ if __name__ == "__main__":
             "SPY":["SPY", "SPYDER"],
             "BABA":["BABA", "ALIBABA"],
             "WISH":["WISH", " WISH,",",WISH," "ContextLogic"],
-            "META":[" FB", " META ", " META,",",META"],
+            "META":[" FB", " META ", " META,", ",META", "FACEBOOK"],
             "DB":[" DB ", " DB,","Deutsche"],
     #           "OPEN":["OPEN", "OPENDOOR"]
             }
@@ -374,15 +367,15 @@ if __name__ == "__main__":
             if bool(re.search(pattern, com, re.I)):
                 com_list.append(com)
         
-        return ' '.join([x for x in com_list]) if len(com_list) > 0 else ''
+        return '. '.join([x for x in com_list]) if len(com_list) > 0 else ''
 
     def build_df(ticker=str, pattern=str):
         index=[]
         titles=list(reddit_comments['title'].values)
         
         ##split the selftext/comments into sentences returning only relevant tickers for this project
-        selftext=list(token_comments(re.split(r' *[\.\?!][\'"\)\]]* *', s), pattern) for s in list(reddit_comments['selftext'].values))
-        comments=[token_comments(re.split(r' *[\.\?!][\'"\)\]]* *', c), pattern) for c in list(reddit_comments['comments'].values)] 
+        selftext=list(token_comments(re.split(r' *[\.\?!]', s, re.I), pattern)+'.' for s in list(reddit_comments['selftext'].values))
+        comments=[token_comments(re.split(r' *[\.\?!]', c, re.I), pattern)+'.' for c in list(reddit_comments['comments'].values)]
         
         ##if title, selftext or comments lack any of our stocks than will ignore
         ##grabbing its index to filter our reddit df
