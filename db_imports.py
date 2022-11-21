@@ -256,21 +256,21 @@ if __name__ == "__main__":
         #Loop all days in the current month 
         for d in range(1, end_dy+1):
             
-            if d==1 and m==1: #go back prior prior month and prior year for 1/1/00
+            if d==1 and m==1: #go back prior month and prior year for 1/1/1900
     #             print(f"Checkpoint 1 - {year-1}/{prv_mo}/{prv_end_dy} to {year}/{m}/{d}")
     #             args( ts_after, ts_before, end year, limit )
                 reddit_dailys.append( 
                             red.CallApi(int(dt.datetime(year-1, prv_mo, prv_end_dy).timestamp()), int(dt.datetime(year, m, d).timestamp()), 10) 
                         ) 
             
-            elif d==1: #go back prior prior month
+            elif d==1: #go back prior month within the same calendar year
     #             print(f" Checkpoint 2 - {year}/{prv_mo}/{prv_end_dy} to {year}/{m}/{d}")
     #             args( ts_after, ts_before, end year, limit )
                 reddit_dailys.append( 
                             red.CallApi(int(dt.datetime(year, prv_mo, prv_end_dy).timestamp()), int(dt.datetime(year, m, d).timestamp()), 10) 
                         ) 
             
-            else:
+            else: #all intra month
     #             print(f" Checkpoint 3 - {year}/{m}/{d-1} to {year}/{m}/{d}")
     #             args( ts_after, ts_before, end year, limit )
                 reddit_dailys.append( 
