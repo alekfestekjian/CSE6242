@@ -96,9 +96,6 @@ class RedditPull:
         
         try:    
 #             print(f"Running API Pull for Reddit Board: {list(red.keys())[0]} for {datetime.utcfromtimestamp(int(ts_before)).strftime('%Y-%m-%d')}") 
-#             submissions_dict = {"id" : [],"url" : [],"title" : [],"score" : [], "num_comments": [], "created_utc" : [], "selftext" : []}
-#             submission_comments_dict = {"comment_id" : [],"comment_parent_id" : [],"comment_body" : [],"comment_link_id" : []}
-            
             gen = self.api.search_submissions(after=ts_after, before=ts_before, filter=['id'], subreddit=subreddit, limit=limit )
                                               
             board={'title':[], 'selftext':[], 'user_id':[], 'author':[], 'created_dt':[], 'score':[], 'upvote_ratio':[], 'url':[], 'comments':[]}
@@ -216,7 +213,6 @@ if __name__ == "__main__":
     else: 
         print("Index data was not loaded due to failed API pull")
     ##################################################################################END STCK/IDX DB INSERT
-
 
     ###########################################################################START REDDIT API PULL - KEVIN
     ########################################################################################################
