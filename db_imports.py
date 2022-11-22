@@ -236,11 +236,11 @@ if __name__ == "__main__":
     reddit_dailys=[]
 
     #manually setting this for now
-    year=2019
-    months=9 #stop at September for 2022
+    year=2020
+    months=12 #stop at September for 2022
 
     ##Loop all months in the year 
-    for m in range(8, 13):
+    for m in range(1, months+1):
     #     print(f"Moving to the next month: {m}
         end_dy = calendar.monthrange(year, m)[1]
         
@@ -276,7 +276,6 @@ if __name__ == "__main__":
                 reddit_dailys.append( 
                         red.CallApi(int(dt.datetime(year, m, d-1).timestamp()), int(dt.datetime(year, m, d).timestamp()), 10) 
                     ) 
-                    
                     
     reddit_dfs=[]
 
