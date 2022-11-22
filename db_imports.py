@@ -236,11 +236,11 @@ if __name__ == "__main__":
     reddit_dailys=[]
 
     #manually setting this for now
-    year=2022
+    year=2019
     months=9 #stop at September for 2022
 
     ##Loop all months in the year 
-    for m in range(1, months+1):
+    for m in range(8, 13):
     #     print(f"Moving to the next month: {m}
         end_dy = calendar.monthrange(year, m)[1]
         
@@ -251,32 +251,32 @@ if __name__ == "__main__":
             
         else:
             prv_end_dy = calendar.monthrange(year, m-1)[1]
-            prv_mo = m + 1
+            prv_mo = m - 1
         
         #Loop all days in the current month 
         for d in range(1, end_dy+1):
             
-            if d==1 and m==1: #go back prior month and prior year for 1/1/1900
+            if d==1 and m==1: #go back prior prior month and prior year for 1/1/00
     #             print(f"Checkpoint 1 - {year-1}/{prv_mo}/{prv_end_dy} to {year}/{m}/{d}")
     #             args( ts_after, ts_before, end year, limit )
                 reddit_dailys.append( 
                             red.CallApi(int(dt.datetime(year-1, prv_mo, prv_end_dy).timestamp()), int(dt.datetime(year, m, d).timestamp()), 10) 
                         ) 
             
-            elif d==1: #go back prior month within the same calendar year
+            elif d==1: #go back prior prior month
     #             print(f" Checkpoint 2 - {year}/{prv_mo}/{prv_end_dy} to {year}/{m}/{d}")
     #             args( ts_after, ts_before, end year, limit )
                 reddit_dailys.append( 
                             red.CallApi(int(dt.datetime(year, prv_mo, prv_end_dy).timestamp()), int(dt.datetime(year, m, d).timestamp()), 10) 
                         ) 
             
-            else: #all intra month
+            else:
     #             print(f" Checkpoint 3 - {year}/{m}/{d-1} to {year}/{m}/{d}")
     #             args( ts_after, ts_before, end year, limit )
                 reddit_dailys.append( 
                         red.CallApi(int(dt.datetime(year, m, d-1).timestamp()), int(dt.datetime(year, m, d).timestamp()), 10) 
                     ) 
-                
+                    
                     
     reddit_dfs=[]
 
@@ -333,7 +333,7 @@ if __name__ == "__main__":
 
     ##filter out anything that isnt in our stock list
     stocks = {"AMZN":["AMZN", "AMAZON"],
-            "GME":["GME", "GAMESTOP", "GAME STOP"],
+            "GME":["GME ", "GME,", "GAMESTOP", "GAME STOP"],
             "TSLA":["TSLA", "TESLA"],
             "AMC":["AMC"],
             "AAPL":["AAPL", "APPLE"],
@@ -426,6 +426,7 @@ if __name__ == "__main__":
     #duplicates were created if title, selftext, comments contained the same ticker
     reddit_dataframe=reddit_dataframe.drop_duplicates(subset=['subreddit','title','ticker','selftext','comments'], keep='first') 
     reddit_dataframe=reddit_dataframe.reset_index(drop=True)
+    ###############################################################################END REDDIT API PULL/INSERT
 
     def exploderows(row_index, ticker, pattern, ticker_check, selftext, comment):    
         if ticker!=ticker_check:
@@ -456,8 +457,8 @@ if __name__ == "__main__":
                 
             if explode_bool:
                 ##copies of that record out to a new row later and change the ticker = ticker
-                print(f"Explode row for ticker: {explode_ticker}")
-                
+    #             print(f"Explode row for ticker: {explode_ticker}")
+        
                 temp_df=reddit_df_copy.loc[j,:].copy()
                 temp_df['ticker']=explode_ticker
 
@@ -467,7 +468,6 @@ if __name__ == "__main__":
 
     arch=Archive("setup", "reddit_commentary", 250) #schema, table, chunksize
     arch.DataDump(insert_df)
-    ###############################################################################END REDDIT API PULL/INSERT
 
     overall_finish=time.perf_counter()
     print(f'__Overall time to complete was {round((overall_finish - overall_start)/60, 2)}')
