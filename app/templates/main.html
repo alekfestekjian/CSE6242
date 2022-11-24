@@ -9,8 +9,18 @@
             {% for stock in stocklist%}
                 <option id="{{ stock }}">{{ stock }}</option>
             {% endfor %}
-        </select>
+        </select> 
     </div>    
+    <div id="hide-search" style="display:none;">
+        <div id="daterange">
+            <label id="daterangelabel">Choose a Date Range:</label>
+            <input class="datepicker" type="text" id="from_date_picker" placeholder="From Date">
+            <input class="datepicker" type="text" id="to_date_picker" placeholder="To Date">
+        </div>
+        <div id="submit-search">
+            <button id="main-search">Search Date Range</button>
+        </div>
+    </div>
 {% endblock %}
 
 {% block rightside %}
@@ -20,15 +30,14 @@
         </div>
 
         <div id="recommendation">
-            Place recommendation here
+            Place recommendations here
         </div>
 
         <div id="subreddit-txt">
-            Placeholder for reddit data    
+            Placeholder for reddit data by stock and date range  
         </div>
-
     </div>
-
+    
     <div id="spinner" style="display:none;">
         <div id="loader"></div>
     </div>

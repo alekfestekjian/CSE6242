@@ -3,8 +3,10 @@ $(document).ready(function() {
     $('#stocks').change(function(e){
         
         let stockNm={'stockchoice':e.target.value};
-
+        $('#hide-container').show()
+        $('#hide-search').show()
         // $('#spinner').show();
+
         $.ajax({
             type: 'POST',
             url: '/getstock',
@@ -13,7 +15,6 @@ $(document).ready(function() {
             contentType: 'application/json; charset=UTF-8',
             success: function(data) {
                 // $('#spinner').hide();
-
                 let xDates = convertUtc(data['stockdata'].businessdate);
                 let ePrices = data['stockdata'].stdclose;
                 let sPrices = data['snpdata'].stdclose;
@@ -25,6 +26,26 @@ $(document).ready(function() {
 
     });
 
+    var from_date_bool=false, to_date_bool=false
+    var from_date, to_date;
+
+    //choose a from and to date
+    $(document).on('click', '.datepicker', function(e) {
+        $(`#${e.target.id}`).datepicker({
+            onselect: function(d) {
+                if (e.target.id=='from_date_picker') {
+                    from_date_bool=true;
+                    from_date=d;
+                } else {
+                    to_date_bool=true;
+                    to_date=d;
+                }
+            }
+        });
+
+        $(`#${e.target.id}`).datepicker("show");
+    });
+    
     //need to convert the utc timestamps returned from our API
     function convertUtc(dates) {
         let dateLen=dates.length;

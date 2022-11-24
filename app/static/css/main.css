@@ -1,7 +1,40 @@
 
-#stocksearch{width: 100%; height: 20px;}
-#stocksearchlabel{color: white; margin-bottom: 25px;}
+#inner-container {
+    display: grid;
+    grid-template-columns: 70% auto;
+    grid-template-rows: 70% auto;
+    grid-template-areas: "Chart1 Recommendation" "Sentiment Sentiment";
+    grid-gap: 10px;
+    height: 100%;
+}
+
+#recommendation{grid-area: Recommendation; height: 100%; background-color: #ddd;}
+#chart-container {grid-area: Chart1; height: 100%;}
+#subreddit-txt {grid-area: Sentiment;background-color: #ddd; color: #d71e28; height: 100%;}
+
+#stocksearch{width: 100%; height: 200px;}
+#stocksearchlabel, #daterangelabel{color: white; margin-bottom: 25px;}
 #stocks{width: 100%;}
+
+#daterange{ margin-bottom: 5px; width: 100%;}
+.datepicker{width: 92%; padding: 5px;}
+
+#main-search{
+    background-color: #4caf50;
+    color: white;
+    padding: 14px 20px;
+    margin: 5px 0px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+}
+
+#main-search:hover{
+    background-color: #d71e28;
+    color: black;
+}
+
 #loader{
     position: fixed;
     top: 50%;
@@ -18,17 +51,3 @@
     -webkit-animation: spin 2s linear infinite;
     animation: 2s linear infinite;
 }
-
-#inner-container {
-    display: grid;
-    grid-template-columns: 70% auto;
-    grid-template-rows: 70% auto;
-    grid-template-areas: "Chart1 Sentiment" "Recommendation Recommendation";
-    grid-gap: 10px;
-    height: 100%;
-}
-
-#recommendation{grid-area: Recommendation; height: 100%; background-color: #ddd;}
-#chart-container {grid-area: Chart1; height: 100%;}
-#subreddit-txt {grid-area: Sentiment;background-color: #ddd; color: #d71e28; height: 100%;}
-
