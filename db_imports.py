@@ -21,10 +21,10 @@ class Config:
 #         self.conn=engine.connect()
 #         self.conn = psycopg2.connect(database="sm_stock_predict",user='postgres',password='cse6242',host='127.0.0.1',port='5432')
         
-        self.conn = psycopg2.connect(database="d3skeejujfn0f0",
-                                     user='qcqgpbdohgijqd',
-                                     password='f00c9aed2fb5f6482b98796671ff2382e2516067e4f2cdb91c2a94aa38f67139',
-                                     host='ec2-3-220-207-90.compute-1.amazonaws.com',
+        self.conn = psycopg2.connect(database="dfqt9vfoh18uko", 
+                                     user='kdlnydflpyjhnx',
+                                     password='877fc89efc05c0c0f3bc52fbe87ae0b4db0c044cd83c0e14107b42fddb032901',
+                                     host='ec2-3-216-167-65.compute-1.amazonaws.com',
                                      port='5432')
         
         self.__schema__=__schema__
