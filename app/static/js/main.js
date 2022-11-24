@@ -24,24 +24,59 @@ $(document).ready(function() {
 
     });
 
-    var from_date_bool=false, to_date_bool=false
-    var from_date, to_date;
-
+ 
     //choose a from and to date
     $(document).on('click', '.datepicker', function(e) {
         $(`#${e.target.id}`).datepicker({
-            onselect: function(d) {
-                if (e.target.id=='from_date_picker') {
-                    from_date_bool=true;
-                    from_date=d;
-                } else {
-                    to_date_bool=true;
-                    to_date=d;
-                }
-            }
+            dateFormat: 'yy-mm-dd',
+            defaultDate:"2022-09-30",
+            // onselect: function(d) {
+            //     if (e.target.id=='from_date_picker') {
+                    
+            //     } else {
+                    
+            //     }
+            // }
         });
-
         $(`#${e.target.id}`).datepicker("show");
+    });
+
+    //find user sentiment data for the user selected ticker and date range
+    //requires both date fields to be populated
+    $('#main-search').click(function() {
+        let ticker = $('#stocks option:selected').val();
+        let from_date = $('#from_date_picker').val();
+        let to_date = $('#to_date_picker').val();
+
+        if ( (from_date!=='') && (to_date!=='') ) {
+           
+            sentimentinfo = {
+                'ticker': ticker,
+                'from_date': from_date,
+                'to_date': to_date
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/getsentiment',
+                data: JSON.stringify(sentimentinfo),
+                datatype: 'json',
+                contentType: 'application/json; charset=UTF-8',
+                success: function(data) {
+                    let reddit_stream="";
+                    let comment_len=data['sentiment'].merged_comments.length;
+
+                    for (let i=0; i<comment_len; i++) {
+                        reddit_stream=reddit_stream.concat(data['sentiment'].merged_comments[i], '. ');
+                    }
+
+                    $('#reddit-flow > marquee > p').html(reddit_stream);   
+                }
+            })
+
+        } else {
+            alert('Both Dates Must Be Populated To Proceed!')
+        }
     });
     
     //need to convert the utc timestamps returned from our API
@@ -128,4 +163,5 @@ $(document).ready(function() {
     })
 
     var cht = new ChartHandle();
+
 });

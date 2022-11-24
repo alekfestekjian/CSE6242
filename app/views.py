@@ -29,6 +29,20 @@ def getstock():
                     "djidata": djidata.to_dict(orient='list')})
 
 
+@app.route("/getsentiment", methods=['POST'])
+def getsentiment():
+    s=request.get_json()
+
+    sentimentdata=pd.read_sql(f"""select ticker, created_dt traded_dt, title, selftext, comments
+                                    from setup.reddit_commentary 
+                                    where ticker='{s['ticker']}' 
+                                    and created_dt between '{s['from_date']}' and '{s['to_date']}' 
+                                    order by created_dt desc""", db)
+
+    sentimentdata['merged_comments']=sentimentdata[['title','selftext','comments']].stack().groupby(level=0).apply(','.join)
+
+    return jsonify({"sentiment": sentimentdata[['ticker','traded_dt','merged_comments']].to_dict(orient='list')})
+
 
 
 
