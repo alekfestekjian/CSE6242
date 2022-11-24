@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+{% block head %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
+    <script src="https://ajax.googleapis.com/ajax/libs/d3js/7.6.1/d3.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/main.js')}}"></script>
+    
+{% endblock %}
+
+</head>
+<body>
+    <div id="main">
+        <div id="main-header">
+            <div id="headline">
+                {{headline}}
+            </div>
+            <div id="logo-container"> <!-- logo we can use for our team? -->
+                <img src="{{ url_for('static', filename='images/WSB.jpg') }}" alt="Logo" style="float:right;">
+            </div>
+        </div>
+        {% block header %}{% endblock %}
+
+        <div id="left-outer">   <!-- left margin -->
+            <div id="left-container">
+                {% block leftside %}{% endblock %}
+            </div>
+        </div>
+
+        <div id="right-outer"> <!-- right container for all of our visuals -->
+            <div id="right-container">
+                {% block rightside %}{% endblock %}
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

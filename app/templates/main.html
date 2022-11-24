@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block header%}{% endblock %}
+
+{% block leftside %}
+    <div id="stocksearch">
+        <label id="stocksearchlabel">Choose a Ticker from the dropdown:</label>
+        <select id="stocks" size="10">
+            {% for stock in stocklist%}
+                <option id="{{ stock }}">{{ stock }}</option>
+            {% endfor %}
+        </select>
+    </div>    
+{% endblock %}
+
+{% block rightside %}
+    <div id="inner-container">
+        <div id="chart-container">
+            <canvas id="line-cht"></canvas>
+        </div>
+
+        <div id="subreddit-txt">
+            <div>Placeholder for reddit data</div>
+        </div>
+
+    </div>
+
+    <div id="spinner" style="display:none;">
+        <div id="loader"></div>
+    </div>
+{% endblock %}
