@@ -3,8 +3,6 @@ $(document).ready(function() {
     $('#stocks').change(function(e){
         
         let stockNm={'stockchoice':e.target.value};
-        $('#hide-container').show()
-        $('#hide-search').show()
         // $('#spinner').show();
 
         $.ajax({
