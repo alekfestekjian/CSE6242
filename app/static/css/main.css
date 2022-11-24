@@ -22,11 +22,13 @@
 #inner-container {
     display: grid;
     grid-template-columns: 70% auto;
-    grid-template-areas: "Chart1 Sentiment";
+    grid-template-rows: 70% auto;
+    grid-template-areas: "Chart1 Sentiment" "Recommendation Recommendation";
     grid-gap: 10px;
     height: 100%;
 }
 
+#recommendation{grid-area: Recommendation; height: 100%; background-color: #ddd;}
 #chart-container {grid-area: Chart1; height: 100%;}
 #subreddit-txt {grid-area: Sentiment;background-color: #ddd; color: #d71e28; height: 100%;}
 
