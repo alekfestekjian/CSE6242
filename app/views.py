@@ -16,9 +16,9 @@ def index():
 @app.route("/getstock", methods=['POST'])
 def getstock():
     stockNm=request.get_json()
-    stockdata=pd.read_sql(f"select businessdate, ticker, close From setup.equity_pricing where ticker='{stockNm['stockchoice']}' and businessdate >= '2018-01-01' order by 1", db)
-    snpdata=pd.read_sql(f"select businessdate, ticker, close From setup.index_pricing where ticker='^GSPC' and businessdate >= '2018-01-01' order by 1", db)
-    djidata=pd.read_sql(f"select businessdate, ticker, close From setup.index_pricing where ticker='^DJI' and businessdate >= '2018-01-01' order by 1", db)
+    stockdata=pd.read_sql(f"select businessdate, ticker, close From setup.equity_pricing where ticker='{stockNm['stockchoice']}' and businessdate between '{stockNm['from_date']}' and '{stockNm['to_date']}' order by 1", db)
+    snpdata=pd.read_sql(f"select businessdate, ticker, close From setup.index_pricing where ticker='^GSPC' and businessdate between '{stockNm['from_date']}' and '{stockNm['to_date']}' order by 1", db)
+    djidata=pd.read_sql(f"select businessdate, ticker, close From setup.index_pricing where ticker='^DJI' and businessdate between '{stockNm['from_date']}' and '{stockNm['to_date']}' order by 1", db)
     
     stockdata['stdclose']=stockdata.loc[:,'close'].apply(lambda e : (e - stockdata['close'].mean()) / stockdata['close'].std())
     snpdata['stdclose']=snpdata.loc[:,'close'].apply(lambda i : (i - snpdata['close'].mean()) / snpdata['close'].std())

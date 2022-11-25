@@ -2,7 +2,12 @@ $(document).ready(function() {
 
     $('#stocks').change(function(e){
         
-        let stockNm={'stockchoice':e.target.value};
+        console.log($('#from_date_picker').val());
+
+        let from_date = $('#from_date_picker').val() != '' ? $('#from_date_picker').val() : '2017-01-01';
+        let to_date = $('#to_date_picker').val() != '' ? $('#to_date_picker').val() : '2022-09-30';
+
+        let stockNm={'stockchoice':e.target.value, 'from_date': from_date, 'to_date': to_date};
         // $('#spinner').show();
 
         $.ajax({
@@ -18,6 +23,8 @@ $(document).ready(function() {
                 let sPrices = data['snpdata'].stdclose;
                 let dPrices = data['djidata'].stdclose;
 
+                console.log(data); //why is bitcoin the only one cutting off the index pricing data around April...
+
                 cht.LineChart(e.target.value, xDates, ePrices, sPrices, dPrices);
             }
         })
@@ -31,10 +38,8 @@ $(document).ready(function() {
             dateFormat: 'yy-mm-dd',
             defaultDate:"2022-09-30",
             // onselect: function(d) {
-            //     if (e.target.id=='from_date_picker') {
-                    
-            //     } else {
-                    
+            //     if (e.target.id=='from_date_picker') {     
+            //          considering disabling the date search beyond 9/2022 given our scope for this project                                  
             //     }
             // }
         });

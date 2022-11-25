@@ -1,12 +1,12 @@
 *{margin: 0; padding: 0; list-style-type: none; font-size: 9pt;}
 body {background-color: #ddd;}
-#main{padding: 10px; display: grid; grid-template-columns: 200px auto; grid-template-rows: 80px auto; 
+#main{padding: 10px; display: grid; grid-template-columns: 200px auto; grid-template-rows: 90px auto; 
         grid-gap: 20px; height: 95vh;}
 
-#main-header{grid-column: 1 / span 2; grid: 1; background-color: #d71e28;box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);
-                display: grid; grid-template-columns: 90% auto;}        
-    #headline{display:inline-block; color: white; font-size: 16pt; padding-top: 25px; font-weight: bold; text-align: center;}         
-    #logo-container{float: right;}
+#main-header{grid-column: 1 / span 2; grid: 1; background-color: #000;box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);
+                display: grid; grid-template-columns: 90% auto; padding: 5px;}        
+    #headline{display:inline-block; background-color: #d71e28;color: white; font-size: 16pt; padding-top: 25px; font-weight: bold; text-align: center;}         
+    #logo-container{float: right; background-color: #d71e28;}
 
 #left-outer{background-color: white; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0); 
             padding: 5px; height: 100%; grid-column: 1; grid-row: 2;}
