@@ -39,7 +39,7 @@ def getsentiment():
                                     and created_dt between '{s['from_date']}' and '{s['to_date']}' 
                                     order by created_dt desc""", db)
 
-    sentimentdata['merged_comments']=sentimentdata[['title','selftext','comments']].stack().groupby(level=0).apply(','.join)
+    sentimentdata['merged_comments']=sentimentdata[['title','selftext','comments']].stack().groupby(level=0).apply(' '.join)
 
     return jsonify({"sentiment": sentimentdata[['ticker','traded_dt','merged_comments']].to_dict(orient='list')})
 

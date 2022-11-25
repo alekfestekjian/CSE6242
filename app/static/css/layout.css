@@ -3,10 +3,9 @@ body {background-color: #ddd;}
 #main{padding: 10px; display: grid; grid-template-columns: 200px auto; grid-template-rows: 80px auto; 
         grid-gap: 20px; height: 95vh;}
 
-#main-header{grid-column: 1 / span 2; grid: 1; background-color: #d71e28;
-            box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}         
-    #headline{display:inline-block; color: #000; font-size: 12pt; padding-top: 35px; 
-            font-weight: bold; border-bottom: 4px solid #f8ce5e;}
+#main-header{grid-column: 1 / span 2; grid: 1; background-color: #d71e28;box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);
+                display: grid; grid-template-columns: 90% auto;}        
+    #headline{display:inline-block; color: white; font-size: 16pt; padding-top: 25px; font-weight: bold; text-align: center;}         
     #logo-container{float: right;}
 
 #left-outer{background-color: white; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0); 

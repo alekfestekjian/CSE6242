@@ -3,14 +3,20 @@
     display: grid;
     grid-template-columns: 80% auto;
     grid-template-rows: 75px auto;
-    grid-template-areas: "Sentiment Sentiment" "Chart1 Recommendation" ;
+    grid-template-areas: "Sentiment Sentiment" "Chart1 RightMargin" ;
     grid-gap: 10px;
     height: 100%;
 }
 
-#recommendation{grid-area: Recommendation; height: 100%; background-color: #ddd;}
-#chart-container {grid-area: Chart1; height: 100%;}
+#right-margin{grid-area: RightMargin; height: 100%; background-color: #ddd;
+display: grid; grid-template-rows: 200px auto;}
+#chart-container {grid-area: Chart1; height: 100%; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
 #subreddit-txt {grid-area: Sentiment;background-color: #ddd; color: #d71e28; height: 100%;}
+
+#recommendation{background-color: white; padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
+#inner-recommendation{background-color: #000; height: 100%; color:white;}
+#description{background-color: white;padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
+#inner-description{background-color: #000;height: 100%; color:white;}
 
 #stocksearch{width: 100%; height: 200px;}
 #stocksearchlabel, #daterangelabel{color: white; margin-bottom: 25px;}
@@ -53,6 +59,7 @@
 }
 
 #reddit-ticker{
+    box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);
     display: flex;
     flex-wrap: wrap;
     width: 100%;
@@ -62,7 +69,7 @@
 
 #reddit-flow{
     width: 76%;
-    background: #cc4444;
+    background: #4074ec;
     padding: 0 2%;
 }
 
@@ -76,19 +83,8 @@
 #title{
     width: 20%;
     text-align: center;
-    background: #c81c1c;
+    background: #034FFF;
     position: relative;
-}
-
-#title::after {
-    position: absolute;
-    content: "";
-    right: -16%;
-    border-left: 20px solid #c81c1c;
-    border-top: 33px solid transparent;
-    border-right: 20px solid transparent;
-    border-bottom: 33px solid transparent;
-    top: 0;
 }
 
 #title h5{
@@ -97,4 +93,5 @@
     height: 100%;
     padding-top: 25px;
 }
+
 

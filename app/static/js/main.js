@@ -67,10 +67,10 @@ $(document).ready(function() {
                     let comment_len=data['sentiment'].merged_comments.length;
 
                     for (let i=0; i<comment_len; i++) {
-                        reddit_stream=reddit_stream.concat(data['sentiment'].merged_comments[i], '. ');
+                        reddit_stream=reddit_stream.concat(data['sentiment'].merged_comments[i]);
                     }
 
-                    $('#reddit-flow > marquee > p').html(reddit_stream);   
+                    $('#reddit-flow > marquee').html(reddit_stream);   
                 }
             })
 
