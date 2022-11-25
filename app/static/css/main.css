@@ -7,9 +7,7 @@
     grid-gap: 10px;
     height: 100%;
 }
-
-#right-margin{grid-area: RightMargin; height: 100%; background-color: #ddd;
-display: grid; grid-template-rows: 200px auto;}
+#right-margin{grid-area: RightMargin; height: 100%; background-color: #ddd; display: grid; grid-template-rows: 200px auto;}
 #chart-container {grid-area: Chart1; height: 100%; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
 #subreddit-txt {grid-area: Sentiment;background-color: #ddd; color: #d71e28; height: 100%;}
 
@@ -18,12 +16,12 @@ display: grid; grid-template-rows: 200px auto;}
 #description{background-color: white;padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
 #inner-description{background-color: #000;height: 100%; color:white;}
 
-#stocksearch{width: 100%; height: 200px;}
+#stocksearch{width: 100%; margin-bottom: 25px;}
 #stocksearchlabel, #daterangelabel{color: white; margin-bottom: 25px;}
 #stocks{width: 100%;}
 
 #daterange{ margin-bottom: 5px; width: 100%;}
-.datepicker{width: 92%; padding: 5px;}
+.datepicker{width: 100%; padding: 5px 0px;}
 
 #main-search{
     background-color: #4caf50;

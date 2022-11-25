@@ -2,8 +2,6 @@ $(document).ready(function() {
 
     $('#stocks').change(function(e){
         
-        console.log($('#from_date_picker').val());
-
         let from_date = $('#from_date_picker').val() != '' ? $('#from_date_picker').val() : '2017-01-01';
         let to_date = $('#to_date_picker').val() != '' ? $('#to_date_picker').val() : '2022-09-30';
 
