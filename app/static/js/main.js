@@ -17,9 +17,9 @@ $(document).ready(function() {
             success: function(data) {
                 // $('#spinner').hide();
                 let xDates = convertUtc(data['stockdata'].businessdate);
-                let ePrices = data['stockdata'].stdclose;
-                let sPrices = data['snpdata'].stdclose;
-                let dPrices = data['djidata'].stdclose;
+                let ePrices = data['stockdata'].ticker_stdclose;
+                let sPrices = data['stockdata'].snp_stdclose;
+                let dPrices = data['stockdata'].dji_stdclose;
 
                 console.log(data); //why is bitcoin the only one cutting off the index pricing data around April...
 
@@ -29,7 +29,6 @@ $(document).ready(function() {
 
     });
 
- 
     //choose a from and to date
     $(document).on('click', '.datepicker', function(e) {
         $(`#${e.target.id}`).datepicker({
