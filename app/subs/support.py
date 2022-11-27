@@ -47,7 +47,8 @@ class Benchmark:
         if len(sentimentdata) > 0:
             #convert our nltk -1 to 1 output into 5 separate buckets for 
             ratings=['Strong Sell', 'Sell', 'Hold', 'Buy', 'Strong Buy']
-            sentimentdata['category'] = pd.cut(sentimentdata.sentiment, bins=5, labels=ratings)
+            bins=[-1.0, -0.6, -0.2, 0.2, 0.6, 1.0]
+            sentimentdata['category'] = pd.cut(sentimentdata.sentiment, bins=bins, labels=ratings, precision=4)
 
             #simple bar chart reflecting the breakout by user sentiment for the above time frame
             sentiment_ratings = (
