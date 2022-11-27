@@ -1,11 +1,11 @@
 $(document).ready(function() {
 
-    $('#stocks').change(function(e){
-        
+    function UpdateSentChart(ticker) {
+
         let from_date = $('#from_date_picker').val() != '' ? $('#from_date_picker').val() : '2017-01-01';
         let to_date = $('#to_date_picker').val() != '' ? $('#to_date_picker').val() : '2022-09-30';
 
-        let stockNm={'stockchoice':e.target.value, 'from_date': from_date, 'to_date': to_date};
+        let stockNm={'stockchoice':ticker, 'from_date': from_date, 'to_date': to_date};
         // $('#spinner').show();
 
         $.ajax({
@@ -21,27 +21,11 @@ $(document).ready(function() {
                 let sPrices = data['stockdata'].snp_stdclose;
                 let dPrices = data['stockdata'].dji_stdclose;
 
-                console.log(data); //why is bitcoin the only one cutting off the index pricing data around April...
-
-                cht.LineChart(e.target.value, xDates, ePrices, sPrices, dPrices);
+                cht.LineChart(ticker, xDates, ePrices, sPrices, dPrices);
             }
         })
+    }
 
-    });
-
-    //choose a from and to date
-    $(document).on('click', '.datepicker', function(e) {
-        $(`#${e.target.id}`).datepicker({
-            dateFormat: 'yy-mm-dd',
-            defaultDate:"2022-09-30",
-            // onselect: function(d) {
-            //     if (e.target.id=='from_date_picker') {     
-            //          considering disabling the date search beyond 9/2022 given our scope for this project                                  
-            //     }
-            // }
-        });
-        $(`#${e.target.id}`).datepicker("show");
-    });
 
     //find user sentiment data for the user selected ticker and date range
     //requires both date fields to be populated
@@ -73,9 +57,15 @@ $(document).ready(function() {
                     }
 
                     $('#reddit-flow > marquee').html(reddit_stream);   
+
+                    cht.BarChart(data['categorical'].category, data['categorical'].category_cnts, data['ticker'], data['from_date'], data['to_date'])
+                                                                       
                 }
             })
 
+            //reload the chart with the updated date range if applicable
+            UpdateSentChart($('#stocks').val());
+            
         } else {
             alert('Both Dates Must Be Populated To Proceed!')
         }
@@ -104,12 +94,11 @@ $(document).ready(function() {
     }
 
     class ChartHandle {
-        constructor(location) {
-            this.location=location
-        }
+        constructor() {}
 
         LineChart(ticker, labels, eqPrices, sPrices, dPrices) {
             pricingchart.data.labels = labels;
+            pricingchart.options.plugins.title.text = `Social Media Sentiment Analysis For ${ticker}`
             pricingchart.data.datasets[0].data = eqPrices;
             pricingchart.data.datasets[0].label = `Closing Prices For ${ticker}`;
             pricingchart.data.datasets[1].data = sPrices;
@@ -118,52 +107,79 @@ $(document).ready(function() {
             pricingchart.data.datasets[2].label = 'Closing Prices For Dow Jones';
             pricingchart.update();
         }
-
+        BarChart(labels, data, ticker, from, to) {  
+            sentimentchart.options.plugins.title.text = `User Sentiment For ${ticker}: ${convertUtc([from])} to ${convertUtc([to])}`
+            sentimentchart.data.labels = labels;
+            sentimentchart.data.datasets[0].data = data;
+            sentimentchart.update();
+        }
     }
 
-    const ctx = document.getElementById('line-cht').getContext('2d');
+    const linectx = document.getElementById('line-cht').getContext('2d');
+    const barctx = document.getElementById('bar-cht').getContext('2d');
 
-    const pricingchart = new Chart(ctx, {
+    const pricingchart = new Chart(linectx, {
         type: 'line',
         data: {
-            labels: this.labels,
             datasets: [
-                {
-                    borderColor: '#FF5733',
-                    fill: false
-                }
-                ,
-                {
-                    borderColor: '#3DB700',
-                    fill: false
-                }
-                ,
-                {
-                    borderColor: '#E8FF03',
-                    fill: false
-                }
-
+                { borderColor: '#FF5733', fill: true },
+                { borderColor: '#3DB700', fill: true },
+                { borderColor: '#E8FF03', fill: true }
             ]
         },
         options: {
             responsive: true,
-            maintainAspectRation: false,
-            title: {
-                display: true,
-                text: 'Reddit Sentiment Analysis'
+            maintainAspectRatio: true,
+            plugins: { title: { display: true, text: 'Reddit Sentiment Analysis' } },
+            scales: { x: { display: true  },  y: { display: true } }        
+        }
+
+    })
+
+    const sentimentchart = new Chart(barctx, {
+        type: 'bar',
+        data: {
+            datasets: [
+                {   
+                    backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                    data: [],
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { title: { display: true, text: '' },
+                       legend: { display: false }
             },
             scales: {
-                x: {
-                    display: true
-                },
-                y: {
-                    display: true
-                }
+                x: { display: true},
+                y: { display: true }
             }
         }
 
     })
 
     var cht = new ChartHandle();
+
+    //choose a from and to date
+    $(document).on('click', '.datepicker', function(e) {
+        $(`#${e.target.id}`).datepicker({
+            dateFormat: 'yy-mm-dd',
+            defaultDate:"2022-09-30",
+            // onselect: function(d) {
+            //     if (e.target.id=='from_date_picker') {     
+            //          considering disabling the date search beyond 9/2022 given our scope for this project                                  
+            //     }
+            // }
+        });
+        $(`#${e.target.id}`).datepicker("show");
+    });
+
+    $('#stocks').change(function(e){
+        UpdateSentChart(e.target.value)
+    });
+
 
 });

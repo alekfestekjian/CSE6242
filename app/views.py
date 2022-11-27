@@ -1,6 +1,5 @@
 from app import app
 from app.subs.support import Benchmark
-
 from flask import render_template, request, jsonify
 
 bench=Benchmark()
@@ -19,7 +18,8 @@ def getstock():
 @app.route("/getsentiment", methods=['POST'])
 def getsentiment():
     sent=request.get_json()
-    return jsonify({"sentiment": bench.SentimentData(sent['ticker'], sent['from_date'], sent['to_date'])})
+    sentiment, categorical = bench.SentimentData(sent['ticker'], sent['from_date'], sent['to_date'])
+    return jsonify({"sentiment": sentiment, 'categorical':categorical, 'ticker': sent['ticker'], 'from_date': sent['from_date'], 'to_date': sent['to_date'] })
 
 
 
