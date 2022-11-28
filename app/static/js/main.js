@@ -1,7 +1,6 @@
 $(document).ready(function() {
 
     function UpdateSentChart(ticker) {
-
         let from_date = $('#from_date_picker').val() != '' ? $('#from_date_picker').val() : '2017-01-01';
         let to_date = $('#to_date_picker').val() != '' ? $('#to_date_picker').val() : '2022-09-30';
 
@@ -16,6 +15,7 @@ $(document).ready(function() {
             contentType: 'application/json; charset=UTF-8',
             success: function(data) {
                 // $('#spinner').hide();
+                $('#line-cht').show();
                 let xDates = convertUtc(data['stockdata'].businessdate);
                 let ePrices = data['stockdata'].ticker_stdclose;
                 let sPrices = data['stockdata'].snp_stdclose;
@@ -65,7 +65,7 @@ $(document).ready(function() {
 
             //reload the chart with the updated date range if applicable
             UpdateSentChart($('#stocks').val());
-            
+
         } else {
             alert('Both Dates Must Be Populated To Proceed!')
         }
@@ -130,7 +130,7 @@ $(document).ready(function() {
         options: {
             responsive: true,
             maintainAspectRatio: true,
-            plugins: { title: { display: true, text: 'Reddit Sentiment Analysis' } },
+            plugins: { title: { display: true, text: '' } },
             scales: { x: { display: true  },  y: { display: true } }        
         }
 
@@ -153,10 +153,7 @@ $(document).ready(function() {
             plugins: { title: { display: true, text: '' },
                        legend: { display: false }
             },
-            scales: {
-                x: { display: true},
-                y: { display: true }
-            }
+            scales: { y: { ticks: { precision: 0 } } }
         }
 
     })
@@ -178,8 +175,10 @@ $(document).ready(function() {
     });
 
     $('#stocks').change(function(e){
-        UpdateSentChart(e.target.value)
+        UpdateSentChart(e.target.value);
     });
 
+    //load with apple so the initial template isnt empty
+    UpdateSentChart('AAPL');
 
 });

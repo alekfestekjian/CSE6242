@@ -31,17 +31,14 @@ class Benchmark:
         return df_final.reset_index().to_dict(orient='list')
 
     def SentimentData(self, ticker, from_dt, to_dt):
-        sentimentdata=pd.read_sql(f"""Select com.ticker, to_char(com.created_dt, 'YYYY Month') traded_dt, com.title, com.selftext, com.comments, sent.sentiment
+        sentimentdata=pd.read_sql(f"""Select com.ticker, to_char(com.created_dt, 'YYYY Month') traded_dt, com.title, com.selftext, com.comments, sent.compound_score sentiment
                                         From setup.reddit_commentary com
                                             inner join mlresults.sentiment sent
                                             on com.id=sent.comment_id
                                         Where com.ticker='{ticker}'
                                         And com.created_dt between '{from_dt}' and '{to_dt}' 
-                                        And Sentiment != 0
                                         order by 2""", db)
 
-
-    
         sentimentdata['merged_comments']=sentimentdata[['title','selftext','comments']].stack().groupby(level=0).apply(' '.join)
 
         if len(sentimentdata) > 0:
