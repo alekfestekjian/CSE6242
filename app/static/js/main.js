@@ -17,11 +17,12 @@ $(document).ready(function() {
                 // $('#spinner').hide();
                 $('#line-cht').show();
                 let xDates = convertUtc(data['stockdata'].businessdate);
+                let pPrices = data['stockdata'].predict_stdclose;
                 let ePrices = data['stockdata'].ticker_stdclose;
                 let sPrices = data['stockdata'].snp_stdclose;
                 let dPrices = data['stockdata'].dji_stdclose;
-
-                cht.LineChart(ticker, xDates, ePrices, sPrices, dPrices);
+                
+                cht.LineChart(ticker, xDates, ePrices, sPrices, dPrices, pPrices);
             }
         })
     }
@@ -33,6 +34,11 @@ $(document).ready(function() {
         let ticker = $('#stocks option:selected').val();
         let from_date = $('#from_date_picker').val();
         let to_date = $('#to_date_picker').val();
+
+        if (ticker===undefined) {
+            alert("Ticker must be selected!")
+            return;
+        }
 
         if ( (from_date!=='') && (to_date!=='') ) {
            
@@ -68,6 +74,7 @@ $(document).ready(function() {
 
         } else {
             alert('Both Dates Must Be Populated To Proceed!')
+            return;
         }
     });
     
@@ -96,7 +103,7 @@ $(document).ready(function() {
     class ChartHandle {
         constructor() {}
 
-        LineChart(ticker, labels, eqPrices, sPrices, dPrices) {
+        LineChart(ticker, labels, eqPrices, sPrices, dPrices, pPrices) {
             pricingchart.data.labels = labels;
             pricingchart.options.plugins.title.text = `Social Media Sentiment Analysis For ${ticker}`
             pricingchart.data.datasets[0].data = eqPrices;
@@ -105,6 +112,8 @@ $(document).ready(function() {
             pricingchart.data.datasets[1].label = 'Closing Prices For S&P 500';
             pricingchart.data.datasets[2].data = dPrices;
             pricingchart.data.datasets[2].label = 'Closing Prices For Dow Jones';
+            pricingchart.data.datasets[3].data = pPrices;
+            pricingchart.data.datasets[3].label = `Predicted Price For ${ticker}`;
             pricingchart.update();
         }
         BarChart(labels, data, ticker, from, to) {  
@@ -124,7 +133,8 @@ $(document).ready(function() {
             datasets: [
                 { borderColor: '#FF5733', fill: true },
                 { borderColor: '#3DB700', fill: true },
-                { borderColor: '#E8FF03', fill: true }
+                { borderColor: '#E8FF03', fill: true },
+                { borderColor: '#034FFF', fill: true }
             ]
         },
         options: {
@@ -179,6 +189,6 @@ $(document).ready(function() {
     });
 
     //load with apple so the initial template isnt empty
-    UpdateSentChart('AAPL');
+    // UpdateSentChart('AAPL');
 
 });

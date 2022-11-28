@@ -20,7 +20,7 @@
 #stocksearchlabel, #daterangelabel{color: white; margin-bottom: 25px;}
 #stocks{width: 100%;}
 
-#daterange{ margin-bottom: 5px; width: 100%;}
+#daterange{ margin: 25px 0; width: 100%;}
 #line-cht{padding: 25px;}
 #bar-cht{padding: 15px;}
 .datepicker{width: 100%; padding: 5px 0px;}
