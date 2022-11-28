@@ -22,7 +22,7 @@ $(document).ready(function() {
                 let sPrices = data['stockdata'].snp_stdclose;
                 let dPrices = data['stockdata'].dji_stdclose;
                 
-                cht.LineChart(ticker, xDates, ePrices, sPrices, dPrices, pPrices);
+                cht.PricingCht(ticker, xDates, ePrices, sPrices, dPrices, pPrices);
             }
         })
     }
@@ -64,7 +64,7 @@ $(document).ready(function() {
 
                     $('#reddit-flow > marquee').html(reddit_stream);   
 
-                    cht.BarChart(data['categorical'].category, data['categorical'].category_cnts, data['ticker'], data['from_date'], data['to_date'])
+                    cht.SentimentCht(data['categorical'].category, data['categorical'].category_cnts, data['ticker'], data['from_date'], data['to_date'])
                                                                        
                 }
             })
@@ -103,7 +103,7 @@ $(document).ready(function() {
     class ChartHandle {
         constructor() {}
 
-        LineChart(ticker, labels, eqPrices, sPrices, dPrices, pPrices) {
+        PricingCht(ticker, labels, eqPrices, sPrices, dPrices, pPrices) {
             pricingchart.data.labels = labels;
             pricingchart.options.plugins.title.text = `Social Media Sentiment Analysis For ${ticker}`
             pricingchart.data.datasets[0].data = eqPrices;
@@ -116,7 +116,7 @@ $(document).ready(function() {
             pricingchart.data.datasets[3].label = `Predicted Price For ${ticker}`;
             pricingchart.update();
         }
-        BarChart(labels, data, ticker, from, to) {  
+        SentimentCht(labels, data, ticker, from, to) {  
             sentimentchart.options.plugins.title.text = `User Sentiment For ${ticker}: ${convertUtc([from])} to ${convertUtc([to])}`
             sentimentchart.data.labels = labels;
             sentimentchart.data.datasets[0].data = data;
