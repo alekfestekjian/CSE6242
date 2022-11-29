@@ -14,13 +14,13 @@ class Benchmark:
     def StockPrices(self, ticker, from_dt, to_dt):
         predict_to_dt = (datetime.strptime(to_dt,'%Y-%m-%d') - pd.tseries.offsets.CustomBusinessDay(n=-7)).strftime('%Y-%m-%d')
 
-        stockdata=pd.read_sql(f"select businessdate, ticker, close From setup.equity_pricing where ticker='{ticker}' and businessdate between '{from_dt}' and '{to_dt}' order by 1", db, index_col='businessdate')
+        stockdata=pd.read_sql(f"select businessdate, ticker, adjclose From setup.equity_pricing where ticker='{ticker}' and businessdate between '{from_dt}' and '{to_dt}' order by 1", db, index_col='businessdate')
         predict=pd.read_sql(f"select businessdate, ticker, price From mlresults.ticker_response where ticker='{ticker}' and businessdate between '{from_dt}' and '{predict_to_dt}' order by 1", db, index_col='businessdate')
         snpdata=pd.read_sql(f"select businessdate, ticker, close From setup.index_pricing where ticker='{self.snp}' and businessdate between '{from_dt}' and '{to_dt}' order by 1", db, index_col='businessdate')
         djidata=pd.read_sql(f"select businessdate, ticker, close From setup.index_pricing where ticker='{self.dji}' and businessdate between '{from_dt}' and '{to_dt}' order by 1", db, index_col='businessdate')
         
-        stockdata['ticker_stdclose']=stockdata.loc[:,'close'].apply(lambda e : (e - stockdata['close'].mean()) / stockdata['close'].std())
-        stockdata=stockdata.rename(columns={"ticker": "ticker", "close": "ticker_close"})
+        stockdata['ticker_stdclose']=stockdata.loc[:,'adjclose'].apply(lambda e : (e - stockdata['adjclose'].mean()) / stockdata['adjclose'].std())
+        stockdata=stockdata.rename(columns={"ticker": "ticker", "adjclose": "ticker_close"})
 
         predict['predict_stdclose']=predict.loc[:,'price'].apply(lambda e : (e - predict['price'].mean()) / predict['price'].std())
         predict=predict.rename(columns={"ticker": "ticker", "price": "ticker_close"})

@@ -16,14 +16,17 @@ body {background-color: #ddd;}
             padding: 5px; height: 100%; grid-column: 2; grid-row: 2;}
 #right-container{height: 99%; padding: 5px;}
 
-@media screen and (max-width: 1024px) {
+
+
+@media screen and (max-device-width: 480px) and (orientation: portrait),
+(max-width: 1024px){
     #main {display: grid; grid-template-columns: 100%; grid-template-rows: 90px 275px auto; padding-right: 20px;}
     #main-header{grid-column: 1; grid-row: 1; width: 100%; display: grid; grid-template-columns: 50% auto;}
 
     #left-outer{grid-column: 1; grid-row: 2; width: 100%;}
     #left-container{height: 96%;}
     #right-outer{grid-column: 1; grid-row: 3; width: 100%;}
-    #headline{display:inline-block; font-size: 12pt; text-align: left; padding: 30px 0px 0px 25px;}   
+    #headline{display:inline-block; font-size: 9pt; text-align: left;}   
     
     #stocks{height: 90px;}
 
@@ -32,10 +35,11 @@ body {background-color: #ddd;}
         flex-wrap: wrap;
     }
     
-    #subreddit-txt {flex: 100%; order: 1; height:80px !important;}   
-    #title h5 {padding-top: 30px !important;}
-    #chart-container {flex: 100%; order: 2; height:400px !important; padding-right: 15px;}
-    #right-margin{flex: 100%; order: 3; height:300px !important;}
+    #subreddit-txt {flex: 100%; order: 1; font-size: 8pt; margin: 0; padding: 0;}   
+    #title h5 {padding-top: 30px !important; margin: 0; padding: 0;}
+    #chart-container {flex: 100%; order: 2; margin: 0; padding: 0;}
+    #right-margin{flex: 100%; order: 3; margin: 0; padding: 0;}
 
 }
+
 

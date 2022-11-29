@@ -41,7 +41,6 @@ $(document).ready(function() {
         }
 
         if ( (from_date!=='') && (to_date!=='') ) {
-           
             sentimentinfo = {
                 'ticker': ticker,
                 'from_date': from_date,
