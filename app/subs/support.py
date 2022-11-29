@@ -1,5 +1,6 @@
 import pandas as pd
 import functools as ft
+import numpy as np
 from datetime import datetime
 from app.config import db
 
@@ -7,7 +8,7 @@ class Benchmark:
     def __init__(self):
         self.snp='^GSPC'
         self.dji='^DJI'
-
+    
     def StockList(self):
         return pd.read_sql(f"select distinct ticker From setup.equity_pricing where ticker != 'OPEN' order by 1", db)['ticker'].values
 
@@ -46,7 +47,19 @@ class Benchmark:
         predict_dict=predict[-7:].reset_index().to_dict(orient='list')
         predict_dict['ticker_close'] = [f'{x:,.2f}' for x in predict_dict['ticker_close']]
 
-        return predict_dict, df_final
+        #calculate the market betas of stock X with the S&P500 and Dow Jones
+        dji_bench_returns = djidata['dji_close'].pct_change()[1:]
+        snp_bench_returns = snpdata['snp_close'].pct_change()[1:]
+        stock_returns = stockdata['ticker_close'].pct_change()[1:]
+
+        stck = np.array(stock_returns)
+        dji = np.array(dji_bench_returns)
+        snp = np.array(snp_bench_returns)
+
+        dji_betas = 1 / np.dot(dji, dji.transpose()) * np.dot(dji.transpose(), stck)
+        snp_betas = 1 / np.dot(snp, snp.transpose()) * np.dot(snp.transpose(), stck)
+
+        return predict_dict, df_final, round(dji_betas,4), round(snp_betas,4)
 
     def SentimentData(self, ticker, from_dt, to_dt):
         sentimentdata=pd.read_sql(f"""Select com.ticker, to_char(com.created_dt, 'YYYY Month') traded_dt, com.title, com.selftext, com.comments, sent.compound_score sentiment

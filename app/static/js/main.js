@@ -31,26 +31,30 @@ $(document).ready(function() {
 
     }
 
-    function UpdateRecommendation(prices) {
+    function UpdateRecommendation(ticker, prices, dji, snp) {
         $('#recommend-tbl').show();
         $("#recommend-tbl tr").remove();
 
         let priceLen = prices['ticker'].length;
         let busdates = convertUtc(prices['businessdate']);
 
-        $('#recommend-tbl').html('<tr><th>Date</th><th>Predicted Price</th></tr>')
+        $('#recommend-tbl').html('<tr><th>Date</th><th>Ticker</th><th>Predicted Price</th></tr>')
 
         for (let i=0; i<priceLen; i++) 
         {
-            let row_str=`<tr class='rec-row'><td>${busdates[i]}</td><td>${prices['ticker_close'][i]}</td></tr>`
+            let row_str=`<tr class='rec-row'><td>${busdates[i]}</td><td>${ticker}</td><td>${prices['ticker_close'][i]}</td></tr>`
             $('#recommend-tbl tr:last').after(row_str);
         }
+
+        $('#snp-beta').html(`Prevailing S&P 500 Market Beta <span style='font-weight: bold; color:yellow;'>${snp}</span>`);
+        $('#dji-beta').html(`Prevailing Dow Jones Market Beta <span style='font-weight: bold; color:yellow;'>${dji}</span>`);
+
+        return;
     }
 
     function UpdateSentChart(ticker) {
-        let from_date = $('#from_date_picker').val() != '' ? $('#from_date_picker').val() : '2017-01-01';
+        let from_date = $('#from_date_picker').val() != '' ? $('#from_date_picker').val() : '2022-09-01';
         let to_date = $('#to_date_picker').val() != '' ? $('#to_date_picker').val() : '2022-09-30';
-
         let stockNm={'stockchoice':ticker, 'from_date': from_date, 'to_date': to_date};
         // $('#spinner').show();
 
@@ -72,7 +76,7 @@ $(document).ready(function() {
                 cht.PricingCht(ticker, xDates, ePrices, sPrices, dPrices, pPrices);
                 
                 //market beta and predicted pricing data
-                UpdateRecommendation(data['prediction'])
+                UpdateRecommendation(ticker, data['prediction'], data['dji_beta'], data['snp_beta'])
             }
         })
     }
@@ -215,6 +219,8 @@ $(document).ready(function() {
     // });
 
     //load with apple so the initial template isnt empty
-    // UpdateSentChart('AAPL');
+    //comment later after testing
+    UpdateSentChart('AAPL');
+    UpdateSentimentData('AAPL', '2022-09-01', '2022-09-30');
 
 });

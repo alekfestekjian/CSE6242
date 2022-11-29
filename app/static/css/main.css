@@ -7,12 +7,13 @@
     grid-gap: 10px;
     height: 100%;
 }
+
 #right-margin{grid-area: RightMargin; height: 100%; background-color: #ddd; display: grid; grid-template-rows: 40% 60%;}
 #chart-container {grid-area: Chart1; padding-top: 25px; height: 95%; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
 #subreddit-txt {grid-area: Sentiment;background-color: #ddd; color: #d71e28; height: 100%;}
 
 #recommendation{background-color: white; padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
-#inner-recommendation{background-color: #000; height: 100%; color:white; display: flex; flex-wrap: wrap;}
+#inner-recommendation{background-color: #000; overflow-y: auto; height: 100%; color:white; display: flex; flex-wrap: wrap;}
 #sentiments{background-color: white;padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
 #inner-sentiments{background-color: #000;height: 100%; color:white;}
 
@@ -84,22 +85,16 @@
     width: 20%;
     text-align: center;
     background: #034FFF;
-    position: relative;
-}
-
-#title h5{
     color: white;
-    height: 100%;
+    font-size: 15pt;
     padding-top: 25px;
-    font-size: 18pt;
 }
 
-#betas{flex:20%; height: 100%; order: 1;}
-
+#betas{flex:20%; height: 100%; order: 1; display: grid;}
+#snp-beta, #dji-beta  {grid-template-rows: 1fr 1fr; padding-top: 20px; text-align: center; border: 2px solid #d71e28;}
 #recommend-tbl {
     flex: 80%;
     border-collapse: collapse;
-    height: 100%;
     font-size: 9pt;
     text-align: center;
     cursor: pointer;
