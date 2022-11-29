@@ -26,15 +26,17 @@ body {background-color: #ddd;}
         #left-container{height: 96%;}
 
     #right-outer{grid-column: 1; grid-row: 3; width: 100%;}
-        #right-container {display: flex !important; flex-wrap: wrap;}
+        #right-container {display: flex !important; flex-wrap: wrap; grid-gap: 0px;}
             
             /* inside our right container */
-            #chart-container {flex: 100%; order: 2; max-height: 420px !important;}
-            #right-margin{flex: 100%; order: 3; max-height: 420px !important;}
+            #chart-container {flex: 100%; order: 2; max-height: 420px !important; }
+
+
+            #right-margin{flex: 100%; order: 3; max-height: 420px !important; }
                 #recommendation{height: 120px; overflow-y: scroll;}
                 #sentiments{height: 300px;}
 
-            #subreddit-txt {flex: 100%; order: 1; margin: 0; padding: 0; max-height: 50px;}   
+            #subreddit-txt {flex: 100%; order: 1; max-height: 50px; }   
                 #title {margin: 0; padding: 0; font-size: 9pt;}
                 #reddit-flow marquee {font-size: 9pt;}
      

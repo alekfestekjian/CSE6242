@@ -64,7 +64,7 @@ $(document).ready(function() {
                     $('#reddit-flow > marquee').html(reddit_stream);   
 
                     cht.SentimentCht(data['categorical'].category, data['categorical'].category_cnts, data['ticker'], data['from_date'], data['to_date'])
-                                                                       
+                    $('#bar-cht').show();                                               
                 }
             })
 
