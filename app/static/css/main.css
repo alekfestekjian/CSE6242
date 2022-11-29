@@ -8,7 +8,7 @@
     height: 100%;
 }
 #right-margin{grid-area: RightMargin; height: 100%; background-color: #ddd; display: grid; grid-template-rows: 40% 60%;}
-#chart-container {grid-area: Chart1; height: 100%; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
+#chart-container {grid-area: Chart1; padding-top: 25px; height: 95%; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
 #subreddit-txt {grid-area: Sentiment;background-color: #ddd; color: #d71e28; height: 100%;}
 
 #recommendation{background-color: white; padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}

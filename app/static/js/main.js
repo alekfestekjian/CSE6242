@@ -139,8 +139,8 @@ $(document).ready(function() {
         options: {
             responsive: true,
             maintainAspectRatio: true,
-            plugins: { title: { display: true, text: '' } },
-            scales: { x: { display: true  },  y: { display: true } }        
+            plugins: { title: { display: true, text: '', font: { size: 18 } } },
+            scales: { x: { title: { display: true, text: 'Business Dates', font: { size: 15 } }} }        
         }
 
     })
