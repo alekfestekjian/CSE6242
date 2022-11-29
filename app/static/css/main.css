@@ -1,5 +1,5 @@
 
-#inner-container {
+#right-container {
     display: grid;
     grid-template-columns: 70% auto;
     grid-template-rows: 75px auto;
@@ -13,8 +13,8 @@
 
 #recommendation{background-color: white; padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
 #inner-recommendation{background-color: #000; height: 100%; color:white;}
-#description{background-color: white;padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
-#inner-description{background-color: #000;height: 100%; color:white;}
+#sentiments{background-color: white;padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
+#inner-sentiments{background-color: #000;height: 100%; color:white;}
 
 #stocksearch{width: 100%; margin-bottom: 25px;}
 #stocksearchlabel, #daterangelabel{color: white; margin-bottom: 25px;}
@@ -75,7 +75,6 @@
 
 #reddit-flow marquee{
     color: white;
-    font-size: 25px;
     padding-top: 25px;
     height: 100%;
 }
@@ -88,10 +87,8 @@
 }
 
 #title h5{
-    font-size: 18px;
     color: white;
     height: 100%;
     padding-top: 25px;
 }
-
 
