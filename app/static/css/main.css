@@ -26,6 +26,8 @@
 #bar-cht{padding: 15px;}
 .datepicker{width: 100%; padding: 5px 0px;}
 
+div.ui-datepicker{font-size: 8pt;}
+
 #main-search{
     background-color: #4caf50;
     color: white;
