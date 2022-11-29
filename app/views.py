@@ -13,7 +13,8 @@ def index():
 @app.route("/getstock", methods=['POST'])
 def getstock():
     stockNm=request.get_json()
-    return jsonify({"stockdata": bench.StockPrices(stockNm['stockchoice'], stockNm['from_date'], stockNm['to_date'])})
+    predict, pricing_data = bench.StockPrices(stockNm['stockchoice'], stockNm['from_date'], stockNm['to_date'])
+    return jsonify({"stockdata": pricing_data, 'prediction':predict})
 
 @app.route("/getsentiment", methods=['POST'])
 def getsentiment():

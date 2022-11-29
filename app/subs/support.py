@@ -41,8 +41,12 @@ class Benchmark:
         df_final=df_final[['predict_stdclose','ticker_stdclose','snp_stdclose','dji_stdclose']].reset_index().to_dict(orient='list')
         df_final['businessdate'] += predicted_dict['businessdate']
         df_final['predict_stdclose'] += predicted_dict['predict_stdclose']
+        
+        #dictionary containing the predicted prices only after the stock pricing end date
+        predict_dict=predict[-7:].reset_index().to_dict(orient='list')
+        predict_dict['ticker_close'] = [f'{x:,.2f}' for x in predict_dict['ticker_close']]
 
-        return df_final
+        return predict_dict, df_final
 
     def SentimentData(self, ticker, from_dt, to_dt):
         sentimentdata=pd.read_sql(f"""Select com.ticker, to_char(com.created_dt, 'YYYY Month') traded_dt, com.title, com.selftext, com.comments, sent.compound_score sentiment

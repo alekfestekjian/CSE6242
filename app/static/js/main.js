@@ -1,4 +1,51 @@
 $(document).ready(function() {
+    
+    function UpdateSentimentData(ticker, from_date, to_date) {
+        sentimentinfo = {
+            'ticker': ticker,
+            'from_date': from_date,
+            'to_date': to_date
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/getsentiment',
+            data: JSON.stringify(sentimentinfo),
+            datatype: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(data) {
+                let reddit_stream="";
+                let comment_len=data['sentiment'].merged_comments.length;
+
+                for (let i=0; i<comment_len; i++) {
+                    reddit_stream=reddit_stream.concat(data['sentiment'].merged_comments[i]);
+                }
+
+                $('#reddit-flow > marquee').html(reddit_stream);   
+
+                cht.SentimentCht(data['categorical'].category, data['categorical'].category_cnts, data['ticker'], data['from_date'], data['to_date'])
+                //populate market beta and predicted prices
+                $('#bar-cht').show();                                               
+            }
+        })
+
+    }
+
+    function UpdateRecommendation(prices) {
+        $('#recommend-tbl').show();
+        $("#recommend-tbl tr").remove();
+
+        let priceLen = prices['ticker'].length;
+        let busdates = convertUtc(prices['businessdate']);
+
+        $('#recommend-tbl').html('<tr><th>Date</th><th>Predicted Price</th></tr>')
+
+        for (let i=0; i<priceLen; i++) 
+        {
+            let row_str=`<tr class='rec-row'><td>${busdates[i]}</td><td>${prices['ticker_close'][i]}</td></tr>`
+            $('#recommend-tbl tr:last').after(row_str);
+        }
+    }
 
     function UpdateSentChart(ticker) {
         let from_date = $('#from_date_picker').val() != '' ? $('#from_date_picker').val() : '2017-01-01';
@@ -23,6 +70,9 @@ $(document).ready(function() {
                 let dPrices = data['stockdata'].dji_stdclose;
                 
                 cht.PricingCht(ticker, xDates, ePrices, sPrices, dPrices, pPrices);
+                
+                //market beta and predicted pricing data
+                UpdateRecommendation(data['prediction'])
             }
         })
     }
@@ -41,35 +91,12 @@ $(document).ready(function() {
         }
 
         if ( (from_date!=='') && (to_date!=='') ) {
-            sentimentinfo = {
-                'ticker': ticker,
-                'from_date': from_date,
-                'to_date': to_date
-            }
-
-            $.ajax({
-                type: 'POST',
-                url: '/getsentiment',
-                data: JSON.stringify(sentimentinfo),
-                datatype: 'json',
-                contentType: 'application/json; charset=UTF-8',
-                success: function(data) {
-                    let reddit_stream="";
-                    let comment_len=data['sentiment'].merged_comments.length;
-
-                    for (let i=0; i<comment_len; i++) {
-                        reddit_stream=reddit_stream.concat(data['sentiment'].merged_comments[i]);
-                    }
-
-                    $('#reddit-flow > marquee').html(reddit_stream);   
-
-                    cht.SentimentCht(data['categorical'].category, data['categorical'].category_cnts, data['ticker'], data['from_date'], data['to_date'])
-                    $('#bar-cht').show();                                               
-                }
-            })
-
+        
             //reload the chart with the updated date range if applicable
             UpdateSentChart($('#stocks').val());
+
+            //load sentiment recommendation chart
+            UpdateSentimentData(ticker, from_date, to_date);
 
         } else {
             alert('Both Dates Must Be Populated To Proceed!')
@@ -159,10 +186,10 @@ $(document).ready(function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { title: { display: true, text: '' },
+            plugins: { title: { display: true, text: '', color: "#fff" },
                        legend: { display: false }
             },
-            scales: { y: { ticks: { precision: 0 } } }
+            scales: { y: { ticks: { precision: 0, color: "#fff" } }, x: { ticks: { color: "#fff" } }  }
         }
 
     })
@@ -183,9 +210,9 @@ $(document).ready(function() {
         $(`#${e.target.id}`).datepicker("show");
     });
 
-    $('#stocks').change(function(e){
-        UpdateSentChart(e.target.value);
-    });
+    // $('#stocks').change(function(e){
+    //     UpdateSentChart(e.target.value);
+    // });
 
     //load with apple so the initial template isnt empty
     // UpdateSentChart('AAPL');

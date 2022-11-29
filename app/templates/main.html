@@ -22,36 +22,38 @@
 {% endblock %}
 
 {% block rightside %}
+    <div id="chart-container">
+        <canvas id="line-cht" style="display: none;"></canvas>
+    </div>
 
-        <div id="chart-container">
-            <canvas id="line-cht" style="display: none;"></canvas>
-        </div>
-
-        <div id="right-margin">
-            <div id="recommendation">
-                <div id="inner-recommendation">
-                    Place prediction and recommendations here??
+    <div id="right-margin">
+        <div id="recommendation">
+            <div id="inner-recommendation">
+                <div id="betas">
+                    <div id="snp-beta"></div>
+                    <div id="dji-beta"></div>
                 </div>
-            </div>
-            <div id="sentiments">
-                <div id="inner-sentiments">
-                    <canvas id="bar-cht" style="display: none;"></canvas>
-                </div>
+                <table id="recommend-tbl" style="display: none;"></table>
             </div>
         </div>
-       
-        <div id="subreddit-txt">
-            <div id="reddit-ticker">
-                <div id="title"><h5>User Sentiment:</h5></div>
-                <div id="reddit-flow">
-                    <marquee direction="left" behavior="scroll" loop="-1">
-                    <!-- insert our reddit commentary here -->
-                    </marquee>
-                </div>
+        <div id="sentiments">
+            <div id="inner-sentiments">
+                <canvas id="bar-cht" style="display: none;"></canvas>
             </div>
         </div>
-
+    </div>
     
+    <div id="subreddit-txt">
+        <div id="reddit-ticker">
+            <div id="title"><h5>User Sentiment:</h5></div>
+            <div id="reddit-flow">
+                <marquee direction="left" behavior="scroll" loop="-1">
+                <!-- insert our reddit commentary here -->
+                </marquee>
+            </div>
+        </div>
+    </div>
+
     <div id="spinner" style="display:none;">
         <div id="loader"></div>
     </div>

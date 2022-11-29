@@ -31,7 +31,6 @@ body {background-color: #ddd;}
             /* inside our right container */
             #chart-container {flex: 100%; order: 2; max-height: 420px !important; }
 
-
             #right-margin{flex: 100%; order: 3; max-height: 420px !important; }
                 #recommendation{height: 120px; overflow-y: scroll;}
                 #sentiments{height: 300px;}
