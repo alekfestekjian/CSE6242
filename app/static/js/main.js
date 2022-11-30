@@ -58,6 +58,10 @@ $(document).ready(function() {
         let stockNm={'stockchoice':ticker, 'from_date': from_date, 'to_date': to_date};
         // $('#spinner').show();
 
+        if (new Date(to_date) > new Date('2022-09-30')) 
+            alert('Max Date Is September 30, 2022') 
+
+
         $.ajax({
             type: 'POST',
             url: '/getstock',
