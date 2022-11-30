@@ -24,16 +24,17 @@ body {background-color: #ddd;}
         #main-header{display: none;}
         #left-outer{order: 1;}
             #left-container{margin-bottom: 5px;}
+            #beta-info, #beta-list{font-size: 8pt !important;}
 
         #right-outer{order: 2; height: 100%; min-height: 1100px !important;}
             #right-container {display: flex !important; flex-direction: column;}
-                #subreddit-txt {order: 1; height: 75px !important; margin-bottom: 5px;}
-                    #title{font-size: 12pt !important;}   
-                    #reddit-flow{font-size: 12pt !important;}  
+                #subreddit-txt {order: 1; height: 60px !important; margin-bottom: 5px;}
+                    #title{font-size: 8pt !important;}   
+                    #reddit-flow marquee{font-size: 8pt !important;}  
                 #chart-container {order: 2; max-height: 420px !important; margin-bottom: 5px;}
                 #right-margin{ order: 3; max-height: 420px !important; margin-bottom: 5px;}
                     #sentiments{margin-top: 25px !important; min-height: 300px;}
-                    #betas{font-size: 10pt !important;}
+                    #betas{font-size: 8pt !important;}
 }   
 
 
