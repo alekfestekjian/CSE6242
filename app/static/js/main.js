@@ -137,13 +137,13 @@ $(document).ready(function() {
             pricingchart.data.labels = labels;
             pricingchart.options.plugins.title.text = `Social Media Sentiment Analysis For ${ticker}`
             pricingchart.data.datasets[0].data = eqPrices;
-            pricingchart.data.datasets[0].label = `Closing Prices For ${ticker}`;
+            pricingchart.data.datasets[0].label = `${ticker}`;
             pricingchart.data.datasets[1].data = sPrices;
-            pricingchart.data.datasets[1].label = 'Closing Prices For S&P 500';
+            pricingchart.data.datasets[1].label = 'S&P 500';
             pricingchart.data.datasets[2].data = dPrices;
-            pricingchart.data.datasets[2].label = 'Closing Prices For Dow Jones';
+            pricingchart.data.datasets[2].label = 'Dow Jones';
             pricingchart.data.datasets[3].data = pPrices;
-            pricingchart.data.datasets[3].label = `Predicted Price For ${ticker}`;
+            pricingchart.data.datasets[3].label = `${ticker} Predicted Price`;
             pricingchart.update();
         }
         SentimentCht(labels, data, ticker, from, to) {  
