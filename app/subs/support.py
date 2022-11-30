@@ -35,22 +35,23 @@ class Benchmark:
         stck_dfs = [stockdata, snpdata, djidata, predict]
         #inner join on market dates, excluding weekends/holidays
         df_final = ft.reduce(lambda left, right: pd.merge(left, right, on='businessdate'), stck_dfs) 
+        df_final=df_final.rename(columns={"ticker_close_x": "ticker_close"})
 
         #append the next 6 predicted dates based on user selected dates + 6 days (predictions are agnostic of market business dates)
         predicted_dict=predict[-7:].reset_index().to_dict(orient='list')
 
-        df_final=df_final[['predict_stdclose','ticker_stdclose','snp_stdclose','dji_stdclose']].reset_index().to_dict(orient='list')
-        df_final['businessdate'] += predicted_dict['businessdate']
-        df_final['predict_stdclose'] += predicted_dict['predict_stdclose']
+        df_dict=df_final[['predict_stdclose','ticker_stdclose','snp_stdclose','dji_stdclose']].reset_index().to_dict(orient='list')
+        df_dict['businessdate'] += predicted_dict['businessdate']
+        df_dict['predict_stdclose'] += predicted_dict['predict_stdclose']
         
         #dictionary containing the predicted prices only after the stock pricing end date
         predict_dict=predict[-7:].reset_index().to_dict(orient='list')
         predict_dict['ticker_close'] = [f'{x:,.2f}' for x in predict_dict['ticker_close']]
 
         #calculate the market betas of stock X with the S&P500 and Dow Jones
-        dji_bench_returns = djidata['dji_close'].pct_change()[1:]
-        snp_bench_returns = snpdata['snp_close'].pct_change()[1:]
-        stock_returns = stockdata['ticker_close'].pct_change()[1:]
+        dji_bench_returns = df_final['dji_close'].pct_change()[1:]
+        snp_bench_returns = df_final['snp_close'].pct_change()[1:]
+        stock_returns = df_final['ticker_close'].pct_change()[1:]
 
         stck = np.array(stock_returns)
         dji = np.array(dji_bench_returns)
@@ -59,7 +60,7 @@ class Benchmark:
         dji_betas = 1 / np.dot(dji, dji.transpose()) * np.dot(dji.transpose(), stck)
         snp_betas = 1 / np.dot(snp, snp.transpose()) * np.dot(snp.transpose(), stck)
 
-        return predict_dict, df_final, round(dji_betas,4), round(snp_betas,4)
+        return predict_dict, df_dict, round(dji_betas,4), round(snp_betas,4)
 
     def SentimentData(self, ticker, from_dt, to_dt):
         sentimentdata=pd.read_sql(f"""Select com.ticker, to_char(com.created_dt, 'YYYY Month') traded_dt, com.title, com.selftext, com.comments, sent.compound_score sentiment
