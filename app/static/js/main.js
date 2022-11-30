@@ -185,7 +185,7 @@ $(document).ready(function() {
         data: {
             datasets: [
                 {   
-                    backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                    backgroundColor: ["#FF0013", "#FF0068","#FBFF06","#75F33E","#04FF00"],
                     data: [],
                     fill: true
                 }
