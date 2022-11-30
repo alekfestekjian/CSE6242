@@ -19,11 +19,19 @@
     <div id="submit-search">
         <button id="main-search">Stock Recommentaion</button>
     </div>
+    <div id="beta-info">
+        Market Beta β is a measure of how the stock selected moves relative (volatility) to the overall market. In this case we are showing in the selected date range the covariance of returns relative to the Dow Jones Industrial Average and the S&P 500 indices.
+    </div>
+    <ul id="beta-list">
+        <li>Beta = 1 = Market Volatility</li>
+        <li>Beta > 1 = Higher Volatility </li>
+        <li>Beta < 1 = Lower Volatility </li>
+    </ul>
 {% endblock %}
 
 {% block rightside %}
     <div id="chart-container">
-        <canvas id="line-cht" style="display: none;"></canvas>
+        <canvas id="line-cht"  style="display: none;"></canvas>
     </div>
 
     <div id="right-margin">

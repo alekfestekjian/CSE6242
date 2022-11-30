@@ -46,8 +46,8 @@ $(document).ready(function() {
             $('#recommend-tbl tr:last').after(row_str);
         }
 
-        $('#snp-beta').html(`Prevailing S&P 500 Market Beta <span style='font-weight: bold; color:yellow;'>${snp}</span>`);
-        $('#dji-beta').html(`Prevailing Dow Jones Market Beta <span style='font-weight: bold; color:yellow;'>${dji}</span>`);
+        $('#snp-beta').html(`Market beta for ${ticker} relative to the S&P 500 index:<br><span style='font-weight: bold; color:yellow;'>${snp}</span>`);
+        $('#dji-beta').html(`Market beta for ${ticker} relative to the Dow Jones index:<br><span style='font-weight: bold; color:yellow;'>${dji}</span>`);
 
         return;
     }

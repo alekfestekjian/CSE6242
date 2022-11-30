@@ -8,18 +8,20 @@
     height: 100%;
 }
 
-#right-margin{grid-area: RightMargin; height: 100%; background-color: #ddd; display: grid; grid-template-rows: 40% 60%;}
+#right-margin{grid-area: RightMargin; height: 100%; background-color: #ddd; display: grid; grid-template-rows: 50% 50%;}
 #chart-container {grid-area: Chart1; padding-top: 25px; height: 95%; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
 #subreddit-txt {grid-area: Sentiment;background-color: #ddd; color: #d71e28; height: 100%;}
 
-#recommendation{background-color: white; padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
+#recommendation{background-color: #fff; padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
 #inner-recommendation{background-color: #000; overflow-y: auto; height: 100%; color:white; display: flex; flex-wrap: wrap;}
-#sentiments{background-color: white;padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
-#inner-sentiments{background-color: #000;height: 100%; color:white;}
+#sentiments{background-color: #fff;padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0);}
+#inner-sentiments{background-color: #000;height: 100%; color:#fff;}
 
 #stocksearch{width: 100%; margin-bottom: 25px;}
-#stocksearchlabel, #daterangelabel{color: white; margin-bottom: 25px;}
+#stocksearchlabel, #daterangelabel{color: #fff; margin-bottom: 25px;}
 #stocks{width: 100%;}
+#beta-info{color: #fff; margin-top: 30px; font-size: 12pt;}
+#beta-list{color: #fff; margin-top: 15px; padding-left: 15px; font-size: 10pt;}
 
 #daterange{ margin: 25px 0; width: 100%;}
 #line-cht{padding: 25px; width: 1300px; height: 650px;}
@@ -30,7 +32,7 @@ div.ui-datepicker{font-size: 8pt;}
 
 #main-search{
     background-color: #4caf50;
-    color: white;
+    color: #fff;
     padding: 14px 20px;
     margin: 5px 0px;
     border: none;
@@ -77,7 +79,7 @@ div.ui-datepicker{font-size: 8pt;}
 }
 
 #reddit-flow marquee{
-    color: white;
+    color: #fff;
     padding-top: 25px;
     height: 100%;
     font-size: 15pt;
@@ -87,12 +89,12 @@ div.ui-datepicker{font-size: 8pt;}
     width: 20%;
     text-align: center;
     background: #034FFF;
-    color: white;
+    color: #fff;
     font-size: 15pt;
     padding-top: 25px;
 }
 
-#betas{flex:20%; height: 100%; order: 1; display: grid;}
+#betas{flex:20%; height: 100%; order: 1; display: grid; font-size: 12pt;}
 #snp-beta, #dji-beta  {grid-template-rows: 1fr 1fr; padding-top: 20px; text-align: center; border: 2px solid #d71e28;}
 #recommend-tbl {
     flex: 80%;
