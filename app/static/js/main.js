@@ -53,8 +53,8 @@ $(document).ready(function() {
     }
 
     function UpdateSentChart(ticker) {
-        let from_date = $('#from_date_picker').val() != '' ? $('#from_date_picker').val() : '2022-09-01';
-        let to_date = $('#to_date_picker').val() != '' ? $('#to_date_picker').val() : '2022-09-30';
+        let from_date = $('#from_date_picker').val() != '' ? $('#from_date_picker').val() : '2020-01-01';
+        let to_date = $('#to_date_picker').val() != '' ? $('#to_date_picker').val() : '2020-02-28';
         let stockNm={'stockchoice':ticker, 'from_date': from_date, 'to_date': to_date};
         // $('#spinner').show();
 
@@ -202,9 +202,15 @@ $(document).ready(function() {
 
     //choose a from and to date
     $(document).on('click', '.datepicker', function(e) {
+
+        let max_dt = new Date('2022-09-30');
+        let min_dt = new Date('2017-01-01');
+
         $(`#${e.target.id}`).datepicker({
+            minDate: min_dt,
+            maxDate: max_dt,
             dateFormat: 'yy-mm-dd',
-            defaultDate:"2022-09-30",
+            defaultDate:"2020-01-01",
             // onselect: function(d) {
             //     if (e.target.id=='from_date_picker') {     
             //          considering disabling the date search beyond 9/2022 given our scope for this project                                  
@@ -221,6 +227,6 @@ $(document).ready(function() {
     //load with apple so the initial template isnt empty
     //comment later after testing
     UpdateSentChart('AAPL');
-    UpdateSentimentData('AAPL', '2022-09-01', '2022-09-30');
+    UpdateSentimentData('AAPL', '2020-01-01', '2020-02-28');
 
 });
