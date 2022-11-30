@@ -14,32 +14,26 @@ body {background-color: #ddd;}
 
 #right-outer{background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0), 0 6px 20px 0 rgba(0,0,0); 
             padding: 5px; height: 100%; grid-column: 2; grid-row: 2;}
-#right-container{height: 99%; padding: 5px;}
+#right-container{height: 99%; padding: 5px; }
 
 
 @media screen and (max-device-width: 480px) and (orientation: portrait), (max-width: 1024px){
-    *{font-size: 0.5em;}
+    *{font-size: 0.9em;}
 
-    #main {display: grid; grid-template-columns: 100%; grid-template-rows: 100px 420px 1150px; padding-right: 20px;}
-        #main-header{grid-column: 1; grid-row: 1; width: 100%; display: grid; grid-template-columns: 50% auto;}
-            #headline{display:inline-block; font-size: 9pt; text-align: left;}  
+    #main{display: flex; flex-direction: column;}
+        #main-header{display: none;}
+        #left-outer{order: 1;}
+            #left-container{margin-bottom: 5px;}
 
-    #left-outer{grid-column: 1; grid-row: 2; width: 100%;}
-        #left-container{height: 96%;}
-
-    #right-outer{grid-column: 1; grid-row: 3; width: 100%;}
-        #right-container {display: flex !important; flex-wrap: wrap; grid-gap: 0px;}
-            
-            /* inside our right container */
-            #chart-container {flex: 100%; order: 2; max-height: 420px !important; }
-
-            #right-margin{flex: 100%; order: 3; max-height: 420px !important; }
-                #recommendation{height: 120px; overflow-y: scroll;}
-                    #inner-recommendation{font-size: 8pt;}
-                #sentiments{height: 300px;}
-
-            #subreddit-txt {flex: 100%; order: 1; max-height: 50px; }   
-
-}
+        #right-outer{order: 2; height: 100%; min-height: 1100px !important;}
+            #right-container {display: flex !important; flex-direction: column;}
+                #subreddit-txt {order: 1; height: 75px !important; margin-bottom: 5px;}
+                    #title{font-size: 12pt !important;}   
+                    #reddit-flow{font-size: 12pt !important;}  
+                #chart-container {order: 2; max-height: 420px !important; margin-bottom: 5px;}
+                #right-margin{ order: 3; max-height: 420px !important; margin-bottom: 5px;}
+                    #sentiments{margin-top: 25px !important; min-height: 300px;}
+                    #betas{font-size: 10pt !important;}
+}   
 
 

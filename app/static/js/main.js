@@ -169,7 +169,7 @@ $(document).ready(function() {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: { title: { display: true, text: '', font: { size: 18 } } },
             scales: { x: { title: { display: true, text: 'Business Dates', font: { size: 15 } }} }        
         }
