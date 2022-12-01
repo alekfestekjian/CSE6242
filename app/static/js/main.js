@@ -175,7 +175,7 @@ $(document).ready(function() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: { title: { display: true, text: '', font: { size: 18 } } },
-            scales: { x: { title: { display: true, text: 'Business Dates', font: { size: 15 } }} }        
+            scales: { y: { title: { display: true, text: 'Standardized Prices', font: { size: 15 } }},  x: { title: { display: true, text: 'Business Dates', font: { size: 15 } }} }        
         }
 
     })
